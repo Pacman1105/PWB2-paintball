@@ -12,7 +12,11 @@ function loadWeaponClasses()
 			if not v.toolPos or v.toolPos == -1 then
 				table.insert(classes, v)
 			else
-				table.insert(classes, v.toolPos, v)
+				if not classes[v.toolPos] then
+					classes[v.toolPos] = v
+				else
+					table.insert(classes, v.toolPos, v)
+				end
 			end
 		end
 	end
@@ -56,6 +60,17 @@ end
 ----------------------------------------------------------------------------------------------
 -- Weapon UTILs
 ----------------------------------------------------------------------------------------------
+
+function RemapValClamped(val, A, B, C, D)
+	if ( A == B ) then
+		if val >= B then return D else return C end
+	end
+
+	local cVal = (val - A) / (B - A)
+	cVal = clamp(cVal, 0.0, 1.0)
+
+	return C + (D - C) * cVal
+end
 
 function GetShapeMaterialAtPos(shape, pos)
 	local _, point = GetShapeClosestPoint(shape, pos)

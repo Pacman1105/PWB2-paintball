@@ -233,7 +233,7 @@ function baseWeap:Deploy()   		 		  	end -- called on weapon equipped
 function baseWeap:Holster()			  		   	end -- called on weapon unequipped
 
 function baseWeap:PrimaryAttack(dt)   		   	end -- called on firing conditions met
-function baseWeap:SecondaryAttack(dt) 		   	end -- called on secondary firing conditions met (MUST OVERRIDE SV_DontFireAltCond() for it to be called!)
+function baseWeap:SecondaryAttack(dt) 			end -- called on secondary firing conditions met
 
 function baseWeap:Reload()            		   	end -- called on reload start
 function baseWeap:WeaponIdle()		  		   	end -- called when no buttons pressed
@@ -328,7 +328,7 @@ function baseWeap:tickPlayer_cl(dt)
 	end
 
 	-- TO-DO: this probably breaks if FWPN_SV_CALLONCE_PRIM is true and you press both at once
-	local empty_sec = (self.ammoAltLoadedMax ~= WEAPON_NOCLIP and self.ammoAltTotal == 0) or (self.ammoAltLoadedMax == WEAPON_NOCLIP and empty_prim) or self:SV_DontFireAltCond()
+	local empty_sec = not self:hasFunc("SecondaryAttack") or (self.ammoAltLoadedMax ~= WEAPON_NOCLIP and self.ammoAltTotal == 0) or (self.ammoAltLoadedMax == WEAPON_NOCLIP and empty_prim) or self:SV_DontFireAltCond()
 	if self.isLocal and self.inSecondary == true then
 		-- enforce order
 		self.inPrimary = false
@@ -632,9 +632,9 @@ function baseWeap:MDL_DecayPunchAng(dt)
 	self.recoilAngVel = VecSub(self.recoilAngVel, VecScale(self.recoilAng, springForceMagnitude))
 
 	-- don't wrap around
-	self.recoilAng[1] = Clamp(self.recoilAng[1], -89,  89 )
-	self.recoilAng[2] = Clamp(self.recoilAng[2], -179, 179)
-	self.recoilAng[3] = Clamp(self.recoilAng[3], -89,  89 )
+	self.recoilAng[1] = clamp(self.recoilAng[1], -89,  89 )
+	self.recoilAng[2] = clamp(self.recoilAng[2], -179, 179)
+	self.recoilAng[3] = clamp(self.recoilAng[3], -89,  89 )
 end
 
 -- MODEL_PUNCHANGRESET: Resets angular recoil of the weapon model
@@ -739,6 +739,43 @@ end
 
 local function matPenetratable(mat)
 	return mat == "glass" or mat == "plastic" or mat == "plaster"
+end
+
+local yellow = false
+
+function baseWeap:FirePaintballsPlayer(shots, pos, spreadRad, range, speed, life)
+	for i=1, shots do
+		local posUse, dir = AIM_GetSpreadedAim(pos, spreadRad, range, self.owner, i)
+
+		-- Apply aim recoil
+		if spreadRad ~= -1 then dir = AIM_RecoilApply(self.owner, posUse, dir) end
+		local velocity = VecScale(dir, speed)
+
+		local pPB = AllocPaintball(pos)
+
+		pPB.entity.velocity = velocity
+
+		pPB.die = life + GetTime()
+
+		pPB.gunName = self.toolName
+		pPB.damage = self.dmg_plyr
+
+		local newCol, r, g, b = GetPlayerColor(self.owner)
+		if newCol then
+			if not yellow then
+				yellow = Vec(r, g, b)
+			elseif not VecStr(Vec(r, g, b)) == VecStr(yellow) then
+				pPB.color = Vec(0,0,0)
+				pPB.colorIsBlack = true
+			end
+		end
+
+		pPB.entity.owner = self.owner
+	end
+
+	-- Reset seed AFTER using it on both server and client
+	-- Can be unreliable at high latency
+	if server then shared.seed = GetRandomInt(0,10000) end
 end
 
 function baseWeap:RecursiveBulletPenetration(shootPos, hitPos, dir, alottedDist, maxDist, iterations)
@@ -1061,6 +1098,10 @@ function baseWeap:PrecacheSFX()
 	end
 
 	self.snds = precachedSounds
+end
+
+function baseWeap:hasFunc(function_name)
+    return self[function_name] ~= baseWeap[function_name]
 end
 
 --=========================================================================

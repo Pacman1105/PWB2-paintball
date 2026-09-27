@@ -105,19 +105,17 @@ GLOBAL_20DEGREES  = 0.17365
 GLOBAL_HEADSHOTMULT = 2.0
 
 -- MAIN
+#include "script/paintballManager.lua"
 #include "script/classes/baseWeap.lua"
 #include "script/classes/kfAnimations.lua"
 
 -- WEAPONS
-#include "script/wpns/testgun.lua"
-#include "script/wpns/adsgun.lua"
-#include "script/wpns/patterngun.lua"
-#include "script/wpns/testshotgun.lua"
-
-#include "script/wpns/meleetool.lua"
-
--- ANIMATIONS
-#include "script/wpns/anims/adsgun.lua"
+#include "script/wpns/double.lua"
+#include "script/wpns/smg.lua"
+#include "script/wpns/pistol.lua"
+#include "script/wpns/ar.lua"
+#include "script/wpns/shotgun.lua"
+#include "script/wpns/sniper.lua"
 
 -- UI
 #include "script/lib/menu.lua"
@@ -206,6 +204,9 @@ function server.update(dt)
          wpns[i]:Update(dt)
       end
    end
+
+   paintBallUpdate(dt, 10 --[[Gravity]])
+   server.dropletUpdate(dt, 10 --[[Gravity]])
 end
 
 -- Sets up weapon classes, precaches SFX and haptics
@@ -282,6 +283,8 @@ function client.update(dt)
    client.PUNCHBASIC_Apply(dt)
 
    client.TENT_Update(dt, 10 --[[Gravity]])
+
+   paintBallUpdate(dt, 10 --[[Gravity]])
 end
 
 local function DontDraw()

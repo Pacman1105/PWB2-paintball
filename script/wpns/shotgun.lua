@@ -6,24 +6,21 @@ C_Shtgn = {} -- goes in GLOBAL_WEAPONS
 
 -- Static values for this specific weapon
 -- These don't need redefined in a weapon if a var is just the default value found in baseWeap
-C_Shtgn.model	  = "shotgun.xml" 		   -- Path to the XML model file
-C_Shtgn.casingOrg = Vec(0.02, 0.08, 0.022) -- Where casings are ejected
+C_Shtgn.model	  = "ithaca.xml" 		   -- Path to the XML model file
+C_Shtgn.casingOrg = Vec(0.02, 0.066, 0.133) -- Where casings are ejected
 
-C_Shtgn.toolID   = "testsg"  	  -- Used by the engine. Lowercase and no spaces
-C_Shtgn.toolName = "PWB2 Shotgun" -- Shown in killfeed
+C_Shtgn.toolID   = "pwb2_pshtgn"   -- Used by the engine. Lowercase and no spaces
+C_Shtgn.toolName = "Paint Shotgun" -- Shown in killfeed
 C_Shtgn.toolSlot = 3
-C_Shtgn.toolPos	 = 2			  -- placement in the hud column
+C_Shtgn.toolPos	 = 3			   -- placement in the hud column
 
-C_Shtgn.ammoLoadedMax 	 = 8				     -- Max clip 	 	-- -1 for no clip (pulls from reserve)
+C_Shtgn.ammoLoadedMax 	 = 6				     -- Max clip 	 	-- -1 for no clip (pulls from reserve)
 C_Shtgn.ammoAltLoadedMax = 0 					 -- Max alt clip 	-- -1 for no clip (pulls from reserve) 0 for no alt fire
 C_Shtgn.ammoPickupSize	 = C_Shtgn.ammoLoadedMax -- Defaults to full mag
-C_Shtgn.dmg_world		 = 0.35					 -- Size of hole in meters
-C_Shtgn.dmg_plyr		 = 0.1					 -- 0.0-1.0
+C_Shtgn.dmg_plyr		 = 0.3					 -- 0.0-1.0
 
 C_Shtgn.flags = addFlags(0, FWPN_SV_CALLONCE_PRIM,
-								 FWPN_SV_CALLONCE_SEC,
-								 FWPN_CLICK_PRIM,
-								 FWPN_CLICK_SEC) -- Weapon flags
+							FWPN_CLICK_PRIM) -- Weapon flags
 C_Shtgn.snds = 0 -- Prechached SFX list, set on INIT
 
 -- override initVars to add new variables
@@ -45,29 +42,12 @@ end
 
 function C_Shtgn:Sounds()
 	return {
-		{"sbarrel.ogg", 	  "sv", "fire"},
-		{"dbarrel.ogg", 	  "sv", "fireAlt"},
+		{"fire_norm.ogg", 	  "sv", "fire"},
 
 		{"sgcock.ogg", 		  "cl", "pump"},
 		{"sgshellin0.ogg",    "cl", "load"},
 		{"sgreloadstart.ogg", "cl", "reload"},
 	}
-end
-
-function C_Shtgn:muzzleFlash(pos, size, color)
-	color = color or Vec(1, 1, 1)
-
-	if self.isLocal then
-		pos = VecAdd(pos, VecScale(GetPlayerVelocity(), GetTimeStep()))
-	end
-
-	local t = Transform(pos)
-	t.rot = QuatRotateQuat(GetCameraTransform().rot, QuatEuler(0,0,GetRandomFloat(-180, 180)))
-
-	-- Create the flashSPR variable to hold the sprite
-	if not C_Shtgn.flashSPR then C_Shtgn.flashSPR = LoadSprite("gfx/flare_0.png") end
-
-	DrawSprite(C_Shtgn.flashSPR, t, size, size, color[1], color[2], color[3], 1.0, true, true, true)
 end
 
 --=========================================================================
@@ -101,80 +81,28 @@ function C_Shtgn:PrimaryAttack(dt)
 			self:MDL_PunchAngReset(-15)
 			self:MDL_PunchAng(Vec(GetRandomFloat(2, 3), GetRandomFloat(-0.5, 0.5), GetRandomFloat(-2, 1)))
 
-			client.PUNCH_Axis(1, 2)
-			client.PUNCH_Axis(2, GetRandomFloat(-0.5, 0.5))
+			--client.PUNCHBASIC_Axis(1, 5)
+			client.PUNCH_Vec(Vec(5, GetRandomFloat(-0.5, 0.5), 0))
 		end
 
-		self:muzzleFlash(mt.pos, 0.8)
-
-		self.pumpTime = GetTime() + 0.5
+		self:muzzleFlash(mt.pos, 0.8, Vec(0.25, 0.25, 0.25))
 
 		self.specialReload = 0
 
-		if self.ammoLoaded ~= 0 then
-		else
+		self.pumpTime = GetTime() + 0.2333
+
+		if self.ammoLoaded == 0 then
 			self.timeWeaponIdle = 1
 		end
 	else
 		PlayFireSound(self.snds["fire"], mt.pos, 300)
 	end
 
+	self:FirePaintballsPlayer(3, GetPlayerEyeTransform(self.owner).pos, GLOBAL_5DEGREES, 60, 75, 4)
+
 	baseWeap.DepleteAmmo(self, 1, 1)
 
-	self:FireBulletsPlayer(6, GetPlayerEyeTransform(self.owner).pos, GLOBAL_10DEGREES, 80)
-
-	self.nextFire = self:GetNextAttackDelay(0.75)
-	self.nextAltFire = self.nextFire
-end
-
-function C_Shtgn:SecondaryAttack(dt)
-	local mt = GetToolLocationWorldTransform("muzzle", self.owner)
-	if not mt then return end
-
-	if client then
-		if self.ammoLoaded <= 1 then
-			self:PlayEmptySound()
-			self:Reload()
-			return
-		end
-
-		self:MDL_PunchPos(Vec(0, 0.2, GetRandomFloat(0.2, 0.3)))
-
-		if self.isLocal then
-			self:ServerWpnCall("SecondaryAttack", dt)
-
-			client.VFX_DynLight(self.owner, 40, 0.5, Vec(0.7, 0.5, 0.3), Vec(), "muzzle")
-
-			self:MDL_PunchAngReset(-15)
-			self:MDL_PunchAng(Vec(GetRandomFloat(4, 5), GetRandomFloat(-0.5, 0.5), GetRandomFloat(-5, -1)))
-
-			client.PUNCH_Axis(1, 5)
-			client.PUNCH_Axis(2, GetRandomFloat(-0.5, 0.5))
-
-			-- shell ejection
-			client.TENT_EjectShell(self.owner, self.casingOrg, Vec(1, -0.2, 0), "MOD/models/xml/shell/casing_shtgn.xml", FSFX_SHTGN)
-		end
-
-		self:muzzleFlash(mt.pos, 1.2, Vec(1.33, 1, 1))
-
-		self.pumpTime = GetTime() + 0.95
-
-		self.specialReload = 0
-
-		if self.ammoLoaded ~= 0 then
-		else
-			self.timeWeaponIdle = 1.5
-		end
-	else
-		PlayFireSound(self.snds["fireAlt"], mt.pos, 300)
-	end
-
-	baseWeap.DepleteAmmo(self, 2, 2)
-
-	self:FireBulletsPlayer(12, GetPlayerEyeTransform(self.owner).pos, GLOBAL_10DEGREES, 80)
-
-	self.nextFire = self:GetNextAttackDelay(1.5)
-	self.nextAltFire = self.nextFire
+	self.nextFire = self:GetNextAttackDelay(0.6)
 end
 
 function C_Shtgn:Reload()
@@ -183,15 +111,15 @@ function C_Shtgn:Reload()
 
 	local curTime = GetTime()
 
-	-- don't reload until recoil is done
-	if self.nextFire > curTime then
-		return end
-
 	local mt = GetToolLocationWorldTransform("muzzle", self.owner)
 
 	-- check to see if we're ready to reload
 	if self.specialReload == 0 then
-		if self.isLocal then 
+		-- don't reload until recoil is done
+		if self.nextFire > curTime then
+			return end
+
+		if self.isLocal then
 			self:MDL_PunchAng(Vec(0, 2, -10))
 			PlaySound(self.snds["reload"], mt.pos, 300)
 		end
@@ -201,15 +129,12 @@ function C_Shtgn:Reload()
 		-- hold gun straight
 		client.PWB_ANIMATOR[self.owner].timeSinceFire = 0.0
 
-		self.specialReload = 3
+		self.specialReload = 1
 
 		self.timeWeaponIdle = curTime + 0.6
 
 		self.nextFire = self:GetNextAttackDelay(1.0)
-		self.nextAltFire = curTime + 1.0
-
-		return
-	elseif self.specialReload == 1 or self.specialReload == 3 then
+	elseif self.specialReload == 1 then
 		-- waiting for gun to move to side
 		if self.timeWeaponIdle > curTime then
 			return end
@@ -227,7 +152,7 @@ function C_Shtgn:Reload()
 			client.PUNCH_Axis(1, -0.33)
 		end
 
-		self.timeWeaponIdle = curTime + 0.5
+		self.timeWeaponIdle = curTime + 0.6
 	else
 		self.specialReload = 1
 
@@ -237,38 +162,37 @@ function C_Shtgn:Reload()
 end
 
 function C_Shtgn:WeaponIdle()
-	self.playEmptySound = true
-
 	if server then return end
+
+	self.playEmptySound = true
 
 	local curTime = GetTime()
 
-	if self.timeWeaponIdle < curTime then
-		if self.ammoLoaded == 0 and self.specialReload == 0 and self.ammoLoaded ~= self.ammoTotal then
+	if self.timeWeaponIdle > curTime then
+		return
+	end
+
+	if self.ammoLoaded == 0 and self.specialReload == 0 and self.ammoLoaded ~= self.ammoTotal then
+		self:Reload()
+	elseif self.specialReload ~= 0 then
+		if self.ammoLoaded ~= self.ammoLoadedMax and self.ammoLoaded ~= self.ammoTotal then
 			self:Reload()
-		elseif self.specialReload ~= 0 then
-			if self.ammoLoaded ~= self.ammoLoadedMax and self.ammoLoaded ~= self.ammoTotal then
-				self:Reload()
-			else
-				if self.pumpTime == -1 then
-					self.pumpTime = 0
+			return
+		end
 
-					-- reload debounce has timed out
-					if self.isLocal then
-						self.slideTime = 0
+		self.specialReload = 0
+		self.timeWeaponIdle = curTime + 1.5
 
-						-- shell ejection
-						client.TENT_EjectShell(self.owner, self.casingOrg, Vec(1, -0.2, 0), "MOD/models/xml/shell/casing_shtgn.xml", FSFX_SHTGN)
-					end
+		if self.pumpTime == -1 then
+			self.pumpTime = 0
 
-					local mt = GetToolLocationWorldTransform("muzzle", self.owner)
-
-					PlaySound(self.snds["pump"], mt.pos, 300)
-				end
-
-				self.specialReload = 0
-				self.timeWeaponIdle = curTime + 1.5
+			-- reload debounce has timed out
+			if self.isLocal then
+				self.slideTime = 0
 			end
+
+			local mt = GetToolLocationWorldTransform("muzzle", self.owner)
+			PlaySound(self.snds["pump"], mt.pos, 300)
 		end
 	end
 end
@@ -283,7 +207,7 @@ function C_Shtgn:tickPlayer_cl(dt)
 			self.slideTime = 0
 
 			-- shell ejection
-			client.TENT_EjectShell(self.owner, self.casingOrg, Vec(1, -0.2, 0), "MOD/models/xml/shell/casing_shtgn.xml", FSFX_SHTGN)
+			client.TENT_EjectShell(self.owner, self.casingOrg, Vec(-0.875, -1.875, -0.625), "MOD/models/xml/shell/casing_shtgn.xml", FSFX_SHTGN)
 		end
 
 		self.pumpTime = 0
@@ -301,9 +225,10 @@ function C_Shtgn:MDL_CustomAnimate(dt)
 		self.body = GunBody
 		-- Slide is the third shape in vox file. Remember original position in attachment frame
 		local shapes = GetBodyShapes(GunBody)
-		self.slide = shapes[3]
+		self.slide = shapes[2]
 		self.slideTransform = GetShapeLocalTransform(self.slide)
 	end
+
 	if self.slide and self.slideTime ~= nil then
 		self.slideTime = self.slideTime + dt
 
