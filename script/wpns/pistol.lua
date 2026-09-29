@@ -8,7 +8,6 @@ C_Pistol = {} -- goes in GLOBAL_WEAPONS
 -- These don't need redefined in a weapon if a var is just the default value found in baseWeap
 
 C_Pistol.model	   = "usp.xml" -- Path to the XML model file
-C_Pistol.casingOrg = Vec() 	   -- Where casings are ejected
 
 C_Pistol.toolID   = "pwb2_ppistol"  -- Used by the engine. Lowercase and no spaces
 C_Pistol.toolName = "Paint Pistol" -- Shown in killfeed

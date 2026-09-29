@@ -8,7 +8,6 @@ C_SMG = {} -- goes in GLOBAL_WEAPONS
 -- These don't need redefined in a weapon if a var is just the default value found in baseWeap
 
 C_SMG.model	    = "smg.xml" 			 -- Path to the XML model file
-C_SMG.casingOrg = Vec(0.02, 0.15, -0.15) -- Where casings are ejected
 
 C_SMG.toolID   = "pwb2_psmg" -- Used by the engine. Lowercase and no spaces
 C_SMG.toolName = "Paint SMG" -- Shown in killfeed

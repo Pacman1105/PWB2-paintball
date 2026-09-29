@@ -8,7 +8,6 @@ C_Spray = {} -- goes in GLOBAL_WEAPONS
 -- These don't need redefined in a weapon if a var is just the default value found in baseWeap
 
 C_Spray.model	  = "gluon.xml" 		   -- Path to the XML model file
-C_Spray.casingOrg = Vec(0.02, 0.15, -0.15) -- Where casings are ejected
 
 C_Spray.toolID   = "pwb2_pspray"  -- Used by the engine. Lowercase and no spaces
 C_Spray.toolName = "PaintThrower" -- Shown in killfeed

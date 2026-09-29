@@ -8,7 +8,6 @@ C_AR = {} -- goes in GLOBAL_WEAPONS
 -- These don't need redefined in a weapon if a var is just the default value found in baseWeap
 
 C_AR.model	   = "ar.xml" 			 	-- Path to the XML model file
-C_AR.casingOrg = Vec(0.02, 0.15, -0.15) -- Where casings are ejected
 
 C_AR.toolID   = "pwb2_par" -- Used by the engine. Lowercase and no spaces
 C_AR.toolName = "Paint AR" -- Shown in killfeed

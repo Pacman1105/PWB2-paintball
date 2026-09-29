@@ -110,6 +110,9 @@ GLOBAL_HEADSHOTMULT = 2.0
 #include "script/classes/kfAnimations.lua"
 
 -- WEAPONS
+#include "script/wpns/thrower.lua"
+--#include "script/wpns/rpg.lua" -- fires one big projectile that explodes into multiple paintballs
+#include "script/wpns/thrower.lua"
 #include "script/wpns/double.lua"
 #include "script/wpns/smg.lua"
 #include "script/wpns/pistol.lua"
@@ -124,14 +127,19 @@ GLOBAL_HEADSHOTMULT = 2.0
 -- MAIN GLOBALS
 ----------------------------------------------------------------------------------------------
 
--- pointers to each weapon class
+-- Holds the pointers to the class reference of weapons/entities
 local GLOBAL_WEAPONS = loadWeaponClasses()
+local GLOBAL_ENTITIES = loadEntityClasses()
 
 -- only calculate this once
-local GLOBAL_WEAPONS_AMNT = #GLOBAL_WEAPONS
+local GLOBAL_WEAPONS_AMNT  = #GLOBAL_WEAPONS
+local GLOBAL_ENTITIES_AMNT = #GLOBAL_ENTITIES
 
 -- pointers to each player's weapons
 PLAYER_WEAPONS = {}
+
+-- pointers to spawned enities
+SPAWNED_ENTITIES = {}
 
 --============================================================================================
 --============================================================================================
