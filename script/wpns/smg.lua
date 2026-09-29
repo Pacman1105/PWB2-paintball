@@ -143,11 +143,5 @@ function C_SMG:tickPlayer_cl(dt)
 		self.accuracyPenalty = clamp(self.accuracyPenalty, 0.0, ACCURACY_MAXIMUM_PENALTY_TIME)
 	end
 
-	if self.isLocal then
-		if client.PWB_ANIMATOR[self.owner].forceSecondaryActionPose then
-			self.idleCycleScale = 0.05
-		end
-	end
-
 	baseWeap.tickPlayer_cl(self, dt)
 end

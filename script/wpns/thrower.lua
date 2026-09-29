@@ -1,4 +1,4 @@
-C_AR = {} -- goes in GLOBAL_WEAPONS
+C_Spray = {} -- goes in GLOBAL_WEAPONS
 
 --=========================================================================
 -- Define the weapon and it's variables
@@ -7,28 +7,28 @@ C_AR = {} -- goes in GLOBAL_WEAPONS
 -- Static values for this specific weapon
 -- These don't need redefined in a weapon if a var is just the default value found in baseWeap
 
-C_AR.model	   = "ar.xml" 			 	-- Path to the XML model file
-C_AR.casingOrg = Vec(0.02, 0.15, -0.15) -- Where casings are ejected
+C_Spray.model	  = "gluon.xml" 		   -- Path to the XML model file
+C_Spray.casingOrg = Vec(0.02, 0.15, -0.15) -- Where casings are ejected
 
-C_AR.toolID   = "pwb2_par" -- Used by the engine. Lowercase and no spaces
-C_AR.toolName = "Paint AR" -- Shown in killfeed
-C_AR.toolSlot = 3
-C_AR.toolPos  = 1		   -- placement in the hud column
+C_Spray.toolID   = "pwb2_pspray"  -- Used by the engine. Lowercase and no spaces
+C_Spray.toolName = "PaintThrower" -- Shown in killfeed
+C_Spray.toolSlot = 3
+C_Spray.toolPos  = 4			  -- placement in the hud column
 
-C_AR.ammoLoadedMax    = 30				   -- Max clip 	 	-- -1 for no clip (pulls from reserve)
-C_AR.ammoAltLoadedMax = 0 				   -- Max alt clip 	-- -1 for no clip (pulls from reserve) 0 for no alt fire
-C_AR.ammoPickupSize   = C_AR.ammoLoadedMax -- Defaults to full mag
-C_AR.dmg_plyr		  = 0.34			   -- 0.0-1.0
+C_Spray.ammoLoadedMax    = -1					 -- Max clip 	 	-- -1 for no clip (pulls from reserve)
+C_Spray.ammoAltLoadedMax = 0 				 	 -- Max alt clip 	-- -1 for no clip (pulls from reserve) 0 for no alt fire
+C_Spray.ammoPickupSize   = 20 					 -- Defaults to full mag
+C_Spray.dmg_plyr		 = 0.07				 	 -- 0.0-1.0
 
-C_AR.flags = addFlags(0, FWPN_SV_CALLONCE_SEC,
+C_Spray.flags = addFlags(0, FWPN_SV_CALLONCE_SEC,
 						  FWPN_CLICK_SEC) -- Weapon flags
-C_AR.snds  = 0 -- Prechached SFX list, set on INIT
+C_Spray.snds  = 0 -- Prechached SFX list, set on INIT
 
-local ACCURACY_SHOT_PENALTY_TIME	= 0.66	-- Applied amount of time each shot adds to the time we must recover from
+local ACCURACY_SHOT_PENALTY_TIME	= 0.2	-- Applied amount of time each shot adds to the time we must recover from
 local ACCURACY_MAXIMUM_PENALTY_TIME	= 1.5	-- Maximum penalty to deal out
 
 -- override initVars to add new variables
-function C_AR:initVars(owner)
+function C_Spray:initVars(owner)
 	baseWeap.initVars(self, owner)
 
 	self.accuracyPenalty = 0
@@ -43,9 +43,10 @@ end
 -- Define the weapon's SFX / VFX
 --=========================================================================
 
-function C_AR:Sounds()
+function C_Spray:Sounds()
 	return {
-		{"fire_light.ogg", "sv", "fire"  },
+		{"launcher_fire.ogg", "sv", "fire",	true},
+
 		{"smg_reload.ogg", "cl", "reload"},
 		{"smg_reload.ogg", "cl", "reloadLoop", true}
 	}
@@ -55,7 +56,7 @@ end
 -- Weapon functions
 --=========================================================================
 
-function C_AR:GetPlayerSpread()
+function C_Spray:GetPlayerSpread()
 	local ramp = RemapValClamped(	self.accuracyPenalty,
 									0.0,
 									ACCURACY_MAXIMUM_PENALTY_TIME,
@@ -63,10 +64,10 @@ function C_AR:GetPlayerSpread()
 									1.0 )
 
 	-- We lerp from very accurate to inaccurate over time
-	return Lerp(0, GLOBAL_5DEGREES, ramp)
+	return Lerp(GLOBAL_5DEGREES, GLOBAL_8DEGREES, ramp)
 end
 
-function C_AR:PrimaryAttack(dt)
+function C_Spray:PrimaryAttack(dt)
 	local mt = GetToolLocationWorldTransform("muzzle", self.owner)
 	if not mt then return end
 
@@ -82,61 +83,58 @@ function C_AR:PrimaryAttack(dt)
 		if self.isLocal then
 			client.VFX_DynLight(self.owner, 15, 0.08, Vec(0.7, 0.5, 0.3), Vec(), "muzzle")
 
-			if self.lastFireTime < GetTime() - 0.3 then
+			if self.lastFireTime < GetTime() - 0.2 then
 				self.timeFiring = 0
 			else
-				self.timeFiring = self.timeFiring + 0.2
+				self.timeFiring = self.timeFiring + 0.1
 			end
 
 			self.lastFireTime = GetTime()
-			local punch = client.PUNCH_MachineGunKick(3, self.timeFiring, 1.33)
+			local punch = client.PUNCH_MachineGunKick(4, self.timeFiring, 1.5)
 
 			self:MDL_PunchAngReset(-15)
 			self:MDL_PunchAng(Vec(GetRandomFloat(0.5, 1.1), GetRandomFloat(-1.25, 1), GetRandomFloat(0.3, 1)))
-			self:MDL_PunchAng(punch, 10)
+			self:MDL_PunchAng(punch, 33)
 
 			client.PUNCH_Vec(Vec(GetRandomFloat(-0.3, -0.5), GetRandomFloat(-0.6, 0.6), 0))
 		end
-
-		self:muzzleFlash(mt.pos, 0.8, Vec(0.25, 0.25, 0.25))
 	else
 		PlayFireSound(self.snds["fire"], mt.pos, 300)
 	end
 
 	baseWeap.DepleteAmmo(self, 1, 1)
 
-	self:FirePaintballsPlayer(1, GetPlayerEyeTransform(self.owner).pos, self:GetPlayerSpread(), 100, 250, 5)
+	self:FirePaintballsPlayer(4, GetPlayerEyeTransform(self.owner).pos, self:GetPlayerSpread(), 50, 25, 6)
+
+	SetRandomSeed(shared.seed)
+	AIM_RecoilAdd(self.owner, Vec(2, GetRandomFloat(-1.33, 1.33), 0))
+	if server then shared.seed = GetRandomInt(0,10000) end
 
 	self.accuracyPenalty = self.accuracyPenalty + ACCURACY_SHOT_PENALTY_TIME
 
-	self.nextFire = self:GetNextAttackDelay(0.2)
+	self.nextFire = self:GetNextAttackDelay(0.1)
 end
 
-function C_AR:Reload()
-	if not self:DefaultReload(2) then return end
-
-	if self.isLocal then
-		self:PlayFollowingSound(self.snds["reloadLoop"], 1.95)
-	else
-		PlaySound(self.snds["reload"], GetPlayerPos(self.owner), 1)
-	end
-end
-
-function C_AR:WeaponIdle()
+function C_Spray:WeaponIdle()
 	self.playEmptySound = true
 end
 
-function C_AR:tickPlayer_sv(dt)
+function C_Spray:tickPlayer_sv(dt)
 	-- Check our penalty time decay
 	if self.nextFire < GetTime() then
 		self.accuracyPenalty = self.accuracyPenalty - dt
 		self.accuracyPenalty = clamp(self.accuracyPenalty, 0.0, ACCURACY_MAXIMUM_PENALTY_TIME)
 	end
 
+	if self.inPrimary then
+		local mt = GetToolLocationWorldTransform("muzzle", self.owner)
+		PlayLoop(self.snds["fire"], mt.pos, 300)
+	end
+	
 	baseWeap.tickPlayer_sv(self, dt)
 end
 
-function C_AR:tickPlayer_cl(dt)
+function C_Spray:tickPlayer_cl(dt)
 	-- Check our penalty time decay
 	if self.nextFire < GetTime() then
 		self.accuracyPenalty = self.accuracyPenalty - dt
