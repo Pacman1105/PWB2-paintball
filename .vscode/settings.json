@@ -2,7 +2,8 @@
     "TeardownIntellisense.enableIntellisense": true,
     "TeardownIntellisense.showPrompt": false,
     "Lua.diagnostics.globals": [
-        "include"
+        "include",
+        "shared"
     ],
     "Lua.workspace.library": [
         "c:\\Users\\pacma\\.vscode\\extensions\\ghoustuser.teardown-intellisense-0.7.1\\api-definitions"

@@ -64,6 +64,7 @@ function C_Spray:PrimaryAttack(dt)
 	local mt = GetToolLocationWorldTransform("muzzle", self.owner)
 	if not mt then return end
 
+
 	if client then
 		if self.ammoTotal <= 0 then
 			self:PlayEmptySound()
@@ -78,6 +79,10 @@ function C_Spray:PrimaryAttack(dt)
 
 			client.PUNCH_Vec(Vec(GetRandomFloat(-1, 1), GetRandomFloat(-1, 1), GetRandomFloat(0, -0.2)))
 		end
+
+		local col = self:PaintBallsAreYellow() and Vec(1, 0.75, 0) or Vec(0,0,0)
+		local _, _, _, dir = GetPlayerAimInfo(mt.pos, 1, self.owner)
+		client.paintBallImpactVFX(mt.pos, VecScale(dir, -1), 0.1, self.owner, col)
 	else
 		PlayFireSound(self.snds["fire"], mt.pos, 300)
 	end

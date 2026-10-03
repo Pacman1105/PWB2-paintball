@@ -335,7 +335,7 @@ function client.paintBallImpactVFX(pos, dir, damage, playerhit, col)
 		size = 0.02
 	end
 
-	local playervel = playerhit ~= 0 and GetPlayerVelocity(playerhit) or Vec(0,0,0)
+	local playervel = playerhit ~= 0 and VecScale(GetPlayerVelocity(playerhit), GetTimeStep()) or Vec(0,0,0)
 
 	local blooddir = VecScale(dir, -1)
 
@@ -354,7 +354,7 @@ function client.paintBallImpactVFX(pos, dir, damage, playerhit, col)
 		ParticleColor(col[1], col[2], col[3])
 		ParticleCollide(0)
 		local direct = VecAdd(blooddir, GetRandomDirection(0.25))
-		SpawnParticle(pos, VecScale(direct, GetRandomFloat(0.8, 3.0), playervel), 0.75)
+		SpawnParticle(pos, VecAdd(VecScale(direct, GetRandomFloat(0.8, 3.0)), playervel), 0.75)
 
 		ParticleReset()
 		ParticleRadius(cloudsize, 0.35)

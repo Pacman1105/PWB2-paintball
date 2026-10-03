@@ -778,6 +778,21 @@ function baseWeap:FirePaintballsPlayer(shots, pos, spreadRad, range, speed, life
 	if server then shared.seed = GetRandomInt(0,10000) end
 end
 
+function baseWeap:PaintBallsAreYellow()
+	local newCol, r, g, b = GetPlayerColor(self.owner)
+	if newCol then
+		if not yellow then
+			yellow = Vec(r, g, b)
+		end
+
+		if not VecStr(Vec(r, g, b)) == VecStr(yellow) then
+			return false
+		end
+	end
+
+	return true
+end
+
 function baseWeap:RecursiveBulletPenetration(shootPos, hitPos, dir, alottedDist, maxDist, iterations)
 	iterations = iterations + 1
 

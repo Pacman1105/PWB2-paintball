@@ -223,7 +223,6 @@ function C_Doub:WeaponIdle()
 		self.timeWeaponIdle = curTime + 1.5
 
 		if self.isLocal then
-			--self.slideTime = 0
 			local mt = GetToolLocationWorldTransform("muzzle", self.owner)
 			self:KF_SetAnim(C_Doub.ANIM_RELOADEND)
 			self:MDL_PunchAng(Vec(5, 0, 0))
@@ -233,11 +232,6 @@ function C_Doub:WeaponIdle()
 
 		if self.pumpTime == -1 then
 			self.pumpTime = 0
-
-			-- reload debounce has timed out
-			if self.isLocal then
-				self.slideTime = 0
-			end
 
 			local mt = GetToolLocationWorldTransform("muzzle", self.owner)
 			PlaySound(self.snds["pump"], mt.pos, 300)
