@@ -180,7 +180,6 @@ function C_Shtgn:WeaponIdle()
 
 			local mt = GetToolLocationWorldTransform("muzzle", self.owner)
 			PlaySound(self.snds["pump"], mt.pos, 300)
-
 		end
 	end
 end

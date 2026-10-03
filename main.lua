@@ -123,6 +123,7 @@ GLOBAL_HEADSHOTMULT = 2.0
 -- ANIMATIONS
 #include "script/wpns/anims/pistol.lua"
 #include "script/wpns/anims/shotgun.lua"
+#include "script/wpns/anims/double.lua"
 
 -- UI
 #include "script/lib/menu.lua"

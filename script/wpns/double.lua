@@ -158,6 +158,7 @@ function C_Doub:Reload()
 			return end
 
 		if self.isLocal then
+			self:KF_SetAnim(C_Doub.ANIM_RELOADSTART)
 			self:MDL_PunchAng(Vec(-5, 0, 0))
 			self:MDL_PunchPos(Vec(0, -0.1, 0))
 			PlaySound(self.snds["reload"], mt.pos, 300)
@@ -224,6 +225,7 @@ function C_Doub:WeaponIdle()
 		if self.isLocal then
 			--self.slideTime = 0
 			local mt = GetToolLocationWorldTransform("muzzle", self.owner)
+			self:KF_SetAnim(C_Doub.ANIM_RELOADEND)
 			self:MDL_PunchAng(Vec(5, 0, 0))
 			self:MDL_PunchPos(Vec(0, 0.1, 0))
 			PlaySound(self.snds["reload"], mt.pos, 300)
