@@ -193,7 +193,7 @@ function C_Sniper:tickPlayer_cl(dt)
 
 		PlaySound(self.snds["pump"], mt.pos, 300)
 
-		self:MDL_PunchPos(Vec(0, 0.1, 0.1))
+		self:MDL_PunchPos(Vec(0, 0.05, 0.1))
 		if self.isLocal then
 			self:MDL_PunchAng(Vec(GetRandomFloat(3, 4), GetRandomFloat(0, 1), GetRandomFloat(-6, -2)))
 			client.PUNCH_Axis(3, -0.33)

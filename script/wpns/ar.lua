@@ -19,8 +19,7 @@ C_AR.ammoAltLoadedMax = 0 				   -- Max alt clip 	-- -1 for no clip (pulls from 
 C_AR.ammoPickupSize   = C_AR.ammoLoadedMax -- Defaults to full mag
 C_AR.dmg_plyr		  = 0.34			   -- 0.0-1.0
 
-C_AR.flags = addFlags(0, FWPN_SV_CALLONCE_SEC,
-						  FWPN_CLICK_SEC) -- Weapon flags
+C_AR.flags = 0 -- Weapon flags
 C_AR.snds  = 0 -- Prechached SFX list, set on INIT
 
 local ACCURACY_SHOT_PENALTY_TIME	= 0.66	-- Applied amount of time each shot adds to the time we must recover from

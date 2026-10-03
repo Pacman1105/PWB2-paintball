@@ -93,6 +93,8 @@ function C_Pistol:PrimaryAttack(dt)
 		if self.isLocal then
 			self:ServerWpnCall("PrimaryAttack", 0, dt)
 
+			self:KF_SetAnim(C_Pistol.ANIM_FIRE)
+
 			client.VFX_DynLight(self.owner, 25, 0.1, Vec(0.7, 0.5, 0.3), Vec(), "muzzle")
 
 			self:MDL_PunchAngReset(-4)

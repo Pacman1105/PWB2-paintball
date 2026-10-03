@@ -19,8 +19,7 @@ C_SMG.ammoAltLoadedMax = 0 				 	 -- Max alt clip 	-- -1 for no clip (pulls from
 C_SMG.ammoPickupSize   = C_SMG.ammoLoadedMax -- Defaults to full mag
 C_SMG.dmg_plyr		   = 0.3				 -- 0.0-1.0
 
-C_SMG.flags = addFlags(0, FWPN_SV_CALLONCE_SEC,
-						  FWPN_CLICK_SEC) -- Weapon flags
+C_SMG.flags = 0 -- Weapon flags
 C_SMG.snds  = 0 -- Prechached SFX list, set on INIT
 
 local ACCURACY_SHOT_PENALTY_TIME	= 0.1	-- Applied amount of time each shot adds to the time we must recover from

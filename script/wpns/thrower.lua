@@ -10,17 +10,16 @@ C_Spray = {} -- goes in GLOBAL_WEAPONS
 C_Spray.model	  = "gluon.xml" 		   -- Path to the XML model file
 
 C_Spray.toolID   = "pwb2_pspray"  -- Used by the engine. Lowercase and no spaces
-C_Spray.toolName = "PaintThrower" -- Shown in killfeed
-C_Spray.toolSlot = 3
-C_Spray.toolPos  = 4			  -- placement in the hud column
+C_Spray.toolName = "Paint Thrower" -- Shown in killfeed
+C_Spray.toolSlot = 6
+--C_Spray.toolPos  = 2			  -- placement in the hud column
 
 C_Spray.ammoLoadedMax    = -1					 -- Max clip 	 	-- -1 for no clip (pulls from reserve)
 C_Spray.ammoAltLoadedMax = 0 				 	 -- Max alt clip 	-- -1 for no clip (pulls from reserve) 0 for no alt fire
 C_Spray.ammoPickupSize   = 20 					 -- Defaults to full mag
 C_Spray.dmg_plyr		 = 0.07				 	 -- 0.0-1.0
 
-C_Spray.flags = addFlags(0, FWPN_SV_CALLONCE_SEC,
-						  FWPN_CLICK_SEC) -- Weapon flags
+C_Spray.flags = 0 -- Weapon flags
 C_Spray.snds  = 0 -- Prechached SFX list, set on INIT
 
 local ACCURACY_SHOT_PENALTY_TIME	= 0.2	-- Applied amount of time each shot adds to the time we must recover from
@@ -31,11 +30,6 @@ function C_Spray:initVars(owner)
 	baseWeap.initVars(self, owner)
 
 	self.accuracyPenalty = 0
-
-	if client and self.isLocal then
-		self.timeFiring = 0
-		self.lastFireTime = 0
-	end
 end
 
 --=========================================================================
@@ -44,7 +38,7 @@ end
 
 function C_Spray:Sounds()
 	return {
-		{"launcher_fire.ogg", "sv", "fire",	true},
+		{"thrower_loop.ogg", "sv", "fire",	true},
 
 		{"smg_reload.ogg", "cl", "reload"},
 		{"smg_reload.ogg", "cl", "reloadLoop", true}
@@ -71,42 +65,34 @@ function C_Spray:PrimaryAttack(dt)
 	if not mt then return end
 
 	if client then
-		if self.ammoLoaded <= 0 then
+		if self.ammoTotal <= 0 then
 			self:PlayEmptySound()
 			self.nextFire = GetTime() + 0.15
 			return
 		end
 
-		self:MDL_PunchPos(Vec(0, 0.01, GetRandomFloat(0.133, 0.166)))
+		self:MDL_PunchPos(Vec(0, 0, 0.025))
 
 		if self.isLocal then
-			client.VFX_DynLight(self.owner, 15, 0.08, Vec(0.7, 0.5, 0.3), Vec(), "muzzle")
-
-			if self.lastFireTime < GetTime() - 0.2 then
-				self.timeFiring = 0
-			else
-				self.timeFiring = self.timeFiring + 0.1
-			end
-
-			self.lastFireTime = GetTime()
-			local punch = client.PUNCH_MachineGunKick(4, self.timeFiring, 1.5)
-
-			self:MDL_PunchAngReset(-15)
 			self:MDL_PunchAng(Vec(GetRandomFloat(0.5, 1.1), GetRandomFloat(-1.25, 1), GetRandomFloat(0.3, 1)))
-			self:MDL_PunchAng(punch, 33)
 
-			client.PUNCH_Vec(Vec(GetRandomFloat(-0.3, -0.5), GetRandomFloat(-0.6, 0.6), 0))
+			client.PUNCH_Vec(Vec(GetRandomFloat(-1, 1), GetRandomFloat(-1, 1), GetRandomFloat(0, -0.2)))
 		end
 	else
 		PlayFireSound(self.snds["fire"], mt.pos, 300)
 	end
 
-	baseWeap.DepleteAmmo(self, 1, 1)
+	baseWeap.DepleteAmmo(self, 1)
 
-	self:FirePaintballsPlayer(4, GetPlayerEyeTransform(self.owner).pos, self:GetPlayerSpread(), 50, 25, 6)
+	-- fire extra 'fake' paintballs on firing client
+	if not self.isLocal then
+		self:FirePaintballsPlayer(4, VecAdd(mt.pos, VecScale(GetPlayerVelocity(), 2*dt)), self:GetPlayerSpread(), 50, 25, 6)
+	else
+		self:FirePaintballsPlayer(8, VecAdd(mt.pos, VecScale(GetPlayerVelocity(), 2*dt)), self:GetPlayerSpread(), 50, 25, 6)
+	end
 
 	SetRandomSeed(shared.seed)
-	AIM_RecoilAdd(self.owner, Vec(2, GetRandomFloat(-1.33, 1.33), 0))
+	AIM_RecoilAdd(self.owner, Vec(1, GetRandomFloat(-1.33, 1.33), 0))
 	if server then shared.seed = GetRandomInt(0,10000) end
 
 	self.accuracyPenalty = self.accuracyPenalty + ACCURACY_SHOT_PENALTY_TIME
@@ -129,7 +115,7 @@ function C_Spray:tickPlayer_sv(dt)
 		local mt = GetToolLocationWorldTransform("muzzle", self.owner)
 		PlayLoop(self.snds["fire"], mt.pos, 300)
 	end
-	
+
 	baseWeap.tickPlayer_sv(self, dt)
 end
 
