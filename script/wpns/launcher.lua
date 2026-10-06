@@ -72,6 +72,7 @@ function C_GL:PrimaryAttack(dt)
 
 			client.PUNCH_Vec(Vec(5, GetRandomFloat(-0.5, 0.5), 0))
 
+			self.cylAngle = self.TargetCylAngle
 			self.TargetCylAngle = self.cylAngle + 60
 		end
 
@@ -132,6 +133,7 @@ function C_GL:Reload()
 		self.specialReload = 2
 
 		PlayFireSound(self.snds["load"], self.muzzle)
+		self.cylAngle = self.TargetCylAngle
 		self.TargetCylAngle = self.cylAngle - 60
 
 		self:MDL_PunchPos(Vec(0, 0, 0.1))
