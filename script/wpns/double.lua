@@ -47,12 +47,6 @@ end
 -- Weapon functions
 --=========================================================================
 
-function C_Doub:Holster()
-	if client then
-		client.PWB_ANIMATOR[self.owner].leftHand.transform.pos = Vec()
-	end
-end
-
 function C_Doub:PrimaryAttack(dt)
 	local mt = GetToolLocationWorldTransform("muzzle", self.owner)
 	if not mt then return end
@@ -94,10 +88,6 @@ function C_Doub:PrimaryAttack(dt)
 
 	self.nextFire = self:GetNextAttackDelay(0.1)
 	self.nextAltFire = self.nextFire
-end
-
-function C_Doub:SV_DontFireAltCond()
-	return self.ammoLoaded ~= 2
 end
 
 function C_Doub:SecondaryAttack(dt)
@@ -182,7 +172,7 @@ function C_Doub:Reload()
 
 		self.specialReload = 2
 
-		PlayFireSound(self.snds["load"], mt.pos, 300)
+		PlayFireSound(self.snds["load"], mt.pos)
 
 		self:MDL_PunchPos(Vec(0, 0, 0.1))
 		if self.isLocal then
@@ -228,13 +218,6 @@ function C_Doub:WeaponIdle()
 			self:MDL_PunchAng(Vec(5, 0, 0))
 			self:MDL_PunchPos(Vec(0, 0.1, 0))
 			PlaySound(self.snds["reload"], mt.pos, 300)
-		end
-
-		if self.pumpTime == -1 then
-			self.pumpTime = 0
-
-			local mt = GetToolLocationWorldTransform("muzzle", self.owner)
-			PlaySound(self.snds["pump"], mt.pos, 300)
 		end
 	end
 end

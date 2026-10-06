@@ -8,7 +8,7 @@ C_Sniper = {} -- goes in GLOBAL_WEAPONS
 -- These don't need redefined in a weapon if a var is just the default value found in baseWeap
 
 C_Sniper.model	   = "m40a1.xml"		    -- Path to the XML model file
-C_Sniper.casingOrg = Vec(0.01, 0.175, -0.1)  -- Where casings are ejected
+C_Sniper.casingOrg = Vec(0.01, 0.175, -0.1) -- Where casings are ejected
 
 C_Sniper.toolID   = "pwb2_psniper" -- Used by the engine. Lowercase and no spaces
 C_Sniper.toolName = "Paint Sniper" -- Shown in killfeed
@@ -19,7 +19,7 @@ C_Sniper.ammoLoadedMax 	  = 2					   -- Max clip 	 	-- -1 for no clip (pulls fro
 C_Sniper.ammoAltLoadedMax = 0 					   -- Max alt clip 	-- -1 for no clip (pulls from reserve) 0 for no alt fire
 C_Sniper.ammoAltItemID	  = 0 					   -- WpnID of item to drain ammo for when altfiring
 C_Sniper.ammoPickupSize	  = C_Sniper.ammoLoadedMax -- Defaults to full mag
-C_Sniper.dmg_plyr		  = 0.75				   	   -- 0.0-1.0
+C_Sniper.dmg_plyr		  = 0.75				   -- 0.0-1.0
 
 C_Sniper.flags= addFlags(0, FWPN_SV_CALLONCE_PRIM,
 							FWPN_SV_CALLONCE_SEC,
@@ -191,7 +191,7 @@ function C_Sniper:tickPlayer_cl(dt)
 	if self.pumpTime > 0 and self.pumpTime <= GetTime() then
 		local mt = GetToolLocationWorldTransform("muzzle", self.owner)
 
-		PlaySound(self.snds["pump"], mt.pos, 300)
+		PlaySound(self.snds["pump"], mt.pos)
 
 		self:MDL_PunchPos(Vec(0, 0.05, 0.1))
 		if self.isLocal then

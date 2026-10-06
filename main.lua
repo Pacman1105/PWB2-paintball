@@ -112,7 +112,7 @@ GLOBAL_HEADSHOTMULT = 2.0
 -- WEAPONS
 #include "script/wpns/thrower.lua"
 --#include "script/wpns/rpg.lua" -- fires one big projectile that explodes into multiple paintballs
-#include "script/wpns/thrower.lua"
+#include "script/wpns/launcher.lua"
 #include "script/wpns/double.lua"
 #include "script/wpns/smg.lua"
 #include "script/wpns/pistol.lua"
