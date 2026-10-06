@@ -53,9 +53,6 @@ end
 --=========================================================================
 
 function C_GL:PrimaryAttack(dt)
-	local mt = GetToolLocationWorldTransform("muzzle", self.owner)
-	if not mt then return end
-
 	if client then
 		if self.ammoLoaded <= 0 then
 			self:PlayEmptySound()
@@ -78,7 +75,7 @@ function C_GL:PrimaryAttack(dt)
 			self.TargetCylAngle = self.cylAngle + 60
 		end
 
-		self:muzzleFlash(mt.pos, 0.8, Vec(0.25, 0.25, 0.25))
+		self:muzzleFlash(self.muzzle, 0.8, Vec(0.25, 0.25, 0.25))
 
 		self.specialReload = 0
 
@@ -86,14 +83,14 @@ function C_GL:PrimaryAttack(dt)
 			self.timeWeaponIdle = 1
 		end
 	else
-		PlayFireSound(self.snds["fire"], mt.pos, 300)
+		PlayFireSound(self.snds["fire"], self.muzzle, 300)
 	end
 
-	self:FirePaintballsPlayer(4, GetPlayerEyeTransform(self.owner).pos, GLOBAL_15DEGREES, 60, 100, 4)
+	self:FirePaintballsPlayer(4, self.eyePos, GLOBAL_15DEGREES, 60, 100, 4)
 
 	baseWeap.DepleteAmmo(self, 1, 1)
 
-	self.nextFire = self:GetNextAttackDelay(0.1)
+	self.nextFire = self:GetNextAttackDelay(0.66)
 	self.nextAltFire = self.nextFire
 end
 
@@ -102,8 +99,6 @@ function C_GL:Reload()
 		return end
 
 	local curTime = GetTime()
-
-	local mt = GetToolLocationWorldTransform("muzzle", self.owner)
 
 	-- check to see if we're ready to reload
 	if self.specialReload == 0 then
@@ -115,7 +110,7 @@ function C_GL:Reload()
 			--self:KF_SetAnim(C_GL.ANIM_RELOADSTART)
 			self:MDL_PunchAng(Vec(-5, 0, 0))
 			self:MDL_PunchPos(Vec(0, -0.1, 0))
-			PlaySound(self.snds["reload"], mt.pos, 300)
+			PlaySound(self.snds["reload"], self.muzzle, 300)
 		end
 
 		-- hold gun straight
@@ -136,7 +131,7 @@ function C_GL:Reload()
 
 		self.specialReload = 2
 
-		PlayFireSound(self.snds["load"], mt.pos)
+		PlayFireSound(self.snds["load"], self.muzzle)
 		self.TargetCylAngle = self.cylAngle - 60
 
 		self:MDL_PunchPos(Vec(0, 0, 0.1))
@@ -178,20 +173,19 @@ function C_GL:WeaponIdle()
 		self.timeWeaponIdle = curTime + 1.5
 
 		if self.isLocal then
-			local mt = GetToolLocationWorldTransform("muzzle", self.owner)
 			--self:KF_SetAnim(C_GL.ANIM_RELOADEND)
 			self:MDL_PunchAng(Vec(5, 0, 0))
 			self:MDL_PunchPos(Vec(0, 0.1, 0))
-			PlaySound(self.snds["reload"], mt.pos, 300)
+			PlaySound(self.snds["reload"], self.muzzle, 300)
 		end
 	end
 end
 
--- This  can't be done (non wastefully) using the keyframe system
+-- This can't be done (non-wastefully) using the keyframe system
 function C_GL:MDL_CustomAnimate(dt)
 	if self.isLocal then
 		--Animate Slide
-		local GunBody = GetToolBody(p)
+		local GunBody = GetToolBody()
 		local voxSize = 0.01
 		local attach = Transform(Vec(0.5*voxSize, 0.5*voxSize, 0))
 		if self.body ~= GunBody then

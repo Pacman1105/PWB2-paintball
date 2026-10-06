@@ -79,9 +79,6 @@ function C_Pistol:GetPlayerSpread()
 end
 
 function C_Pistol:PrimaryAttack(dt)
-	local mt = GetToolLocationWorldTransform("muzzle", self.owner)
-	if not mt then return end
-
 	if client then
 		if self.ammoLoaded <= 0 then
 			self:PlayEmptySound()
@@ -115,9 +112,9 @@ function C_Pistol:PrimaryAttack(dt)
 			self:MDL_PunchPos(Vec(GetRandomFloat(-0.05, 0.05), GetRandomFloat(0.0, 0.025), GetRandomFloat(0.05, 0.1)))
 		end
 
-		self:muzzleFlash(mt.pos, 1, Vec(0.25, 0.25, 0.25))
+		self:muzzleFlash(self.muzzle, 1, Vec(0.25, 0.25, 0.25))
 	else
-		PlayFireSound(self.snds["fire"], mt.pos, 300)
+		PlayFireSound(self.snds["fire"], self.muzzle, 300)
 	end
 
 	baseWeap.DepleteAmmo(self, 1, 1)
@@ -125,7 +122,7 @@ function C_Pistol:PrimaryAttack(dt)
 	local inAds = (server and self.ads) or (client and client.PWB_ANIMATOR[self.owner].forceSecondaryActionPose)
 	local spread = self:GetPlayerSpread() * (inAds and 0.25 or 1)
 
-	self:FirePaintballsPlayer(1, GetPlayerEyeTransform(self.owner).pos, spread, 100, 150, 5)
+	self:FirePaintballsPlayer(1, self.eyePos, spread, 100, 150, 5)
 
 	self.accuracyPenalty = self.accuracyPenalty + ACCURACY_SHOT_PENALTY_TIME
 

@@ -66,9 +66,6 @@ function C_Sniper:Holster()
 end
 
 function C_Sniper:PrimaryAttack(dt)
-	local mt = GetToolLocationWorldTransform("muzzle", self.owner)
-	if not mt then return end
-
 	if client then
 		if self.ammoLoaded <= 0 then
 			self:PlayEmptySound()
@@ -99,18 +96,18 @@ function C_Sniper:PrimaryAttack(dt)
 			self:MDL_PunchPos(Vec(GetRandomFloat(-0.05, 0.05), GetRandomFloat(0.0, 0.025), GetRandomFloat(0.05, 0.1)))
 		end
 
-		self:muzzleFlash(mt.pos, 1.33, Vec(0.25, 0.25, 0.25))
+		self:muzzleFlash(self.muzzle, 1.33, Vec(0.25, 0.25, 0.25))
 
 		self.pumpTime = GetTime() + 0.5
 	else
-		PlayFireSound(self.snds["fire"], mt.pos, 300)
+		PlayFireSound(self.snds["fire"], self.muzzle, 300)
 	end
 
 	baseWeap.DepleteAmmo(self, 1, 1)
 
 	local inAds = (server and self.ads) or (client and client.PWB_ANIMATOR[self.owner].forceSecondaryActionPose)
 
-	self:FirePaintballsPlayer(1, GetPlayerEyeTransform(self.owner).pos, inAds and 0 or GLOBAL_2DEGREES, 500, 300, 5)
+	self:FirePaintballsPlayer(1, self.eyePos, inAds and 0 or GLOBAL_2DEGREES, 500, 300, 5)
 
 	SetRandomSeed(shared.seed)
 	AIM_RecoilAdd(self.owner, Vec(2, GetRandomFloat(-0.25, 1.33), 0))
@@ -189,9 +186,7 @@ function C_Sniper:tickPlayer_cl(dt)
 	end
 
 	if self.pumpTime > 0 and self.pumpTime <= GetTime() then
-		local mt = GetToolLocationWorldTransform("muzzle", self.owner)
-
-		PlaySound(self.snds["pump"], mt.pos)
+		PlaySound(self.snds["pump"], self.muzzle)
 
 		self:MDL_PunchPos(Vec(0, 0.05, 0.1))
 		if self.isLocal then

@@ -61,10 +61,6 @@ function C_Spray:GetPlayerSpread()
 end
 
 function C_Spray:PrimaryAttack(dt)
-	local mt = GetToolLocationWorldTransform("muzzle", self.owner)
-	if not mt then return end
-
-
 	if client then
 		if self.ammoTotal <= 0 then
 			self:PlayEmptySound()
@@ -81,19 +77,19 @@ function C_Spray:PrimaryAttack(dt)
 		end
 
 		local col = self:PaintBallsAreYellow() and Vec(1, 0.75, 0) or Vec(0,0,0)
-		local _, _, _, dir = GetPlayerAimInfo(mt.pos, 1, self.owner)
-		client.paintBallImpactVFX(mt.pos, VecScale(dir, -1), 0.1, self.owner, col)
+		local _, _, _, dir = GetPlayerAimInfo(self.muzzle, 1, self.owner)
+		client.paintBallImpactVFX(self.muzzle, VecScale(dir, -1), 0.1, self.owner, col)
 	else
-		PlayFireSound(self.snds["fire"], mt.pos, 300)
+		PlayFireSound(self.snds["fire"], self.muzzle, 300)
 	end
 
 	baseWeap.DepleteAmmo(self, 1)
 
 	-- fire extra 'fake' paintballs on firing client
 	if not self.isLocal then
-		self:FirePaintballsPlayer(4, VecAdd(mt.pos, VecScale(GetPlayerVelocity(), 2*dt)), self:GetPlayerSpread(), 50, 25, 6)
+		self:FirePaintballsPlayer(4, VecAdd(self.muzzle, VecScale(GetPlayerVelocity(), 2*dt)), self:GetPlayerSpread(), 50, 25, 6)
 	else
-		self:FirePaintballsPlayer(8, VecAdd(mt.pos, VecScale(GetPlayerVelocity(), 2*dt)), self:GetPlayerSpread(), 50, 25, 6)
+		self:FirePaintballsPlayer(8, VecAdd(self.muzzle, VecScale(GetPlayerVelocity(), 2*dt)), self:GetPlayerSpread(), 50, 25, 6)
 	end
 
 	SetRandomSeed(shared.seed)
@@ -117,8 +113,7 @@ function C_Spray:tickPlayer_sv(dt)
 	end
 
 	if self.inPrimary then
-		local mt = GetToolLocationWorldTransform("muzzle", self.owner)
-		PlayLoop(self.snds["fire"], mt.pos, 300)
+		PlayLoop(self.snds["fire"], self.muzzle, 300)
 	end
 
 	baseWeap.tickPlayer_sv(self, dt)

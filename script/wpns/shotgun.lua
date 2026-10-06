@@ -42,9 +42,6 @@ end
 --=========================================================================
 
 function C_Shtgn:PrimaryAttack(dt)
-	local mt = GetToolLocationWorldTransform("muzzle", self.owner)
-	if not mt then return end
-
 	if client then
 		if self.ammoLoaded <= 0 then
 			self:PlayEmptySound()
@@ -66,7 +63,7 @@ function C_Shtgn:PrimaryAttack(dt)
 			client.PUNCH_Vec(Vec(5, GetRandomFloat(-0.5, 0.5), 0))
 		end
 
-		self:muzzleFlash(mt.pos, 0.8, Vec(0.25, 0.25, 0.25))
+		self:muzzleFlash(self.muzzle, 0.8, Vec(0.25, 0.25, 0.25))
 
 		self.specialReload = 0
 
@@ -76,10 +73,10 @@ function C_Shtgn:PrimaryAttack(dt)
 			self.timeWeaponIdle = 1
 		end
 	else
-		PlayFireSound(self.snds["fire"], mt.pos, 300)
+		PlayFireSound(self.snds["fire"], self.muzzle, 300)
 	end
 
-	self:FirePaintballsPlayer(3, GetPlayerEyeTransform(self.owner).pos, GLOBAL_5DEGREES, 60, 75, 4)
+	self:FirePaintballsPlayer(3, self.eyePos, GLOBAL_5DEGREES, 60, 75, 4)
 
 	baseWeap.DepleteAmmo(self, 1, 1)
 
@@ -92,8 +89,6 @@ function C_Shtgn:Reload()
 
 	local curTime = GetTime()
 
-	local mt = GetToolLocationWorldTransform("muzzle", self.owner)
-
 	-- check to see if we're ready to reload
 	if self.specialReload == 0 then
 		-- don't reload until recoil is done
@@ -102,7 +97,7 @@ function C_Shtgn:Reload()
 
 		if self.isLocal then
 			self:MDL_PunchAng(Vec(0, 2, -10))
-			PlaySound(self.snds["reload"], mt.pos, 300)
+			PlaySound(self.snds["reload"], self.muzzle, 300)
 		end
 
 		if self.ammoLoaded == 0 then self.pumpTime = -1 end
@@ -124,7 +119,7 @@ function C_Shtgn:Reload()
 
 		self.specialReload = 2
 
-		PlayFireSound(self.snds["load"], mt.pos)
+		PlayFireSound(self.snds["load"], self.muzzle)
 
 		self:MDL_PunchPos(Vec(0, 0.1, 0.1))
 		if self.isLocal then
@@ -172,17 +167,14 @@ function C_Shtgn:WeaponIdle()
 				self:KF_SetAnim(C_Shtgn.ANIM_PUMP)
 			end
 
-			local mt = GetToolLocationWorldTransform("muzzle", self.owner)
-			PlaySound(self.snds["pump"], mt.pos)
+			PlaySound(self.snds["pump"], self.muzzle)
 		end
 	end
 end
 
 function C_Shtgn:tickPlayer_cl(dt)
 	if self.pumpTime > 0 and self.pumpTime <= GetTime() then
-		local mt = GetToolLocationWorldTransform("muzzle", self.owner)
-
-		PlaySound(self.snds["pump"], mt.pos)
+		PlaySound(self.snds["pump"], self.muzzle)
 
 		if self.isLocal then
 			self:KF_SetAnim(C_Shtgn.ANIM_PUMP)
