@@ -60,7 +60,7 @@ function C_GL:PrimaryAttack(dt)
 			return
 		end
 
-		self:MDL_PunchPos(Vec(0, 0.1, 0.15))
+		self:MDL_PunchPos(Vec(0, 0.1, 0.2))
 
 		if self.isLocal then
 			self:ServerWpnCall("PrimaryAttack", dt)
@@ -85,9 +85,9 @@ function C_GL:PrimaryAttack(dt)
 		end
 	else
 		PlayFireSound(self.snds["fire"], self.muzzle, 300)
-	end
 
-	self:FirePaintballsPlayer(4, self.eyePos, GLOBAL_15DEGREES, 60, 100, 4)
+		server.fireGrenade(Transform(self.muzzle, GetPlayerEyeTransform(self.owner).rot), self.owner)
+	end
 
 	baseWeap.DepleteAmmo(self, 1, 1)
 
@@ -109,8 +109,8 @@ function C_GL:Reload()
 
 		if self.isLocal then
 			--self:KF_SetAnim(C_GL.ANIM_RELOADSTART)
-			self:MDL_PunchAng(Vec(-5, 0, 0))
-			self:MDL_PunchPos(Vec(0, -0.1, 0))
+			self:MDL_PunchAng(Vec(-2, 0, 10))
+			self:MDL_PunchPos(Vec(-0.1, 0, 0))
 			PlaySound(self.snds["reload"], self.muzzle, 300)
 		end
 
@@ -176,8 +176,8 @@ function C_GL:WeaponIdle()
 
 		if self.isLocal then
 			--self:KF_SetAnim(C_GL.ANIM_RELOADEND)
-			self:MDL_PunchAng(Vec(5, 0, 0))
-			self:MDL_PunchPos(Vec(0, 0.1, 0))
+			self:MDL_PunchAng(Vec(2, 0, -10))
+			self:MDL_PunchPos(Vec(0.1, 0, 0))
 			PlaySound(self.snds["reload"], self.muzzle, 300)
 		end
 	end

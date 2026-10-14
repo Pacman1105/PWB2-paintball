@@ -148,26 +148,26 @@ end
 function baseWeap:init_sv(wpnSlot)
 	-- must be called like this
 	baseWeap.init_tool(self)
-	baseWeap.PrecacheSFX(self)
+
+	PrecacheSFX(self)
+
 	self.weaponSlot	= wpnSlot
 
 	-- Delete the raw sounds now that they are uneeded
 	FREE(self.init_sv)
 	FREE(self.init_tool)
 	FREE(self.Sounds)
-	FREE(self.PrecacheSFX)
 	FREE(self.tickPlayer_cl)
 end
 
 function baseWeap:init_cl(wpnSlot)
-	-- must be called like this
-	baseWeap.PrecacheSFX(self)
+	PrecacheSFX(self)
+
 	self.weaponSlot	= wpnSlot
 
 	-- Delete the raw sounds now that they are uneeded
 	FREE(self.init_cl)
 	FREE(self.Sounds)
-	FREE(self.PrecacheSFX)
 	FREE(self.tickPlayer_sv)
 end
 
@@ -206,7 +206,7 @@ function baseWeap:muzzleFlash(pos, size, color)
 end
 
 -- defines sound data per weapon class
--- sounds are automatically parsed from the snd folder
+-- sounds are automatically parsed from the mod's snd folder unless baseSND is true
 -- dist and loop are optional and default to values shown in table
 -- index is optional and defaults to order loaded (shown below)
 -- x sv (index 1 on sv)
@@ -216,8 +216,8 @@ end
 -- you can access sounds from other weapon classes instead of duplicating them
 function baseWeap:Sounds()
 	return {
---  	   SOUND	  load to	  [index]      [loop]  [dist]
-		{"SOUND.ogg", "sv|cl", "name/num/nil", false,	10}
+--  	   SOUND	  load to	  [index]      [loop] [baseSND] [dist]
+		{"SOUND.ogg", "sv|cl", "name/num/nil",  false,	false,    10}
 	}
 end
 
@@ -736,7 +736,7 @@ end
 
 -- this works on both client and the server (as long as you call it with the proper args)
 function ReceiveCall(func, owner, slot, ...)
-	local wpn = PLAYER_WEAPONS[owner][slot]
+	local wpn = GLOBAL_PLYR_WEAPONS[owner][slot]
 
 	if not wpn then return end
 
@@ -759,7 +759,7 @@ local function matPenetratable(mat)
 	return mat == "glass" or mat == "plastic" or mat == "plaster"
 end
 
-local yellow = false
+yellow = false
 
 function baseWeap:FirePaintballsPlayer(shots, pos, spreadRad, range, speed, life)
 	for i=1, shots do
@@ -794,21 +794,6 @@ function baseWeap:FirePaintballsPlayer(shots, pos, spreadRad, range, speed, life
 	-- Reset seed AFTER using it on both server and client
 	-- Can be unreliable at high latency
 	if server then shared.seed = GetRandomInt(0,10000) end
-end
-
-function baseWeap:PaintBallsAreYellow()
-	local newCol, r, g, b = GetPlayerColor(self.owner)
-	if newCol then
-		if not yellow then
-			yellow = Vec(r, g, b)
-		end
-
-		if not VecStr(Vec(r, g, b)) == VecStr(yellow) then
-			return false
-		end
-	end
-
-	return true
 end
 
 function baseWeap:RecursiveBulletPenetration(shootPos, hitPos, dir, alottedDist, maxDist, iterations)
@@ -1100,39 +1085,6 @@ function baseWeap:PlayFollowingSound(loop, length)
 	self.followingSNDS[#self.followingSNDS + 1] = {loop, (GetTime() + length)}
 end
 
-function baseWeap:PrecacheSFX()
-	local precachedSounds = {}
-	local soundsLoaded = 0
-
-	for i, sounddata in ipairs(self:Sounds()) do
-		-- Distance defaults to 10 on SV + CL
-		sounddata[5] = sounddata[5] and sounddata[5] or 10
-
-		-- Set the index
-		sounddata[3] = sounddata[3] and sounddata[3] or (soundsLoaded + 1)
-
-		if server and sounddata[2] == "sv" then
-            soundsLoaded = soundsLoaded + 1
-
-			if sounddata[4] and sounddata[4] == true then
-                precachedSounds[sounddata[3]] = LoadLoop("MOD/snd/" .. sounddata[1], sounddata[5])
-            else
-                precachedSounds[sounddata[3]] = LoadSound("MOD/snd/" .. sounddata[1], sounddata[5])
-            end
-		elseif client and sounddata[2] == "cl" then
-            soundsLoaded = soundsLoaded + 1
-
-            if sounddata[4] and sounddata[4] == true then
-                precachedSounds[sounddata[3]] = LoadLoop("MOD/snd/" .. sounddata[1], sounddata[5])
-            else
-                precachedSounds[sounddata[3]] = LoadSound("MOD/snd/" .. sounddata[1], sounddata[5])
-            end
-		end
-	end
-
-	self.snds = precachedSounds
-end
-
 function baseWeap:hasFunc(function_name)
     return self[function_name] ~= baseWeap[function_name]
 end
@@ -1175,10 +1127,10 @@ function baseWeap:DumpGlobals()
 
 	if false then
 		DebugWatch(prefix .. "prevPrimFireDelay", 	self.prevPrimFireDelay)
-		DebugWatch(prefix .. "lastShotInHoldTime", 		self.lastShotInHoldTime)
+		DebugWatch(prefix .. "lastShotInHoldTime", 	self.lastShotInHoldTime)
 
 		DebugWatch(prefix .. "timeWeaponIdle", 		self.timeWeaponIdle)
 	end
-	
+
 	DebugWatch(prefix .. "recoil", 				AIM_RecoilGetVec(self.owner))
 end

@@ -5,6 +5,22 @@ giCurrDroplets = 0
 
 local MAX_DROPLETS = 600
 
+function PaintBallsAreYellow(p)
+	local newCol, r, g, b = GetPlayerColor(p)
+	if newCol then
+		if not yellow then
+			yellow = Vec(r, g, b)
+			return true
+		end
+
+		if not VecStr(Vec(r, g, b)) == VecStr(yellow) then
+			return false
+		end
+	end
+
+	return true
+end
+
 local function newCLent()
 	return {
 		--entity_state_t curstate,  -- The state information from the last message received from server
@@ -348,7 +364,7 @@ function client.paintBallImpactVFX(pos, dir, damage, playerhit, col)
 		ParticleReset()
 		ParticleRadius(dropsize)
 		ParticleGravity(GetRandomFloat(-5, -10))
-		ParticleAlpha(5, 0, "easein") 
+		ParticleAlpha(5, 0, "easein")
 		ParticleTile(5)
 		ParticleStretch(10)
 		ParticleColor(col[1], col[2], col[3])
@@ -358,11 +374,94 @@ function client.paintBallImpactVFX(pos, dir, damage, playerhit, col)
 
 		ParticleReset()
 		ParticleRadius(cloudsize, 0.35)
-		ParticleAlpha(5, 0, "easein") 
+		ParticleAlpha(5, 0, "easein")
 		ParticleTile(1)
 		ParticleStretch(10)
 		ParticleColor(col[1], col[2], col[3])
 		ParticleCollide(0)
 		SpawnParticle(pos, VecAdd(VecScale(direct, math.random()*1.5), playervel), 0.75)
+	end
+end
+
+function explosions()
+	local count = GetEventCount("pb_explode")
+   	for i=1, count do
+		local pos, playerThrew, dir = GetEvent("pb_explode", i)
+		DebugPrint(i .. (client and " CLIENT" or " SERVER"))
+		if client then
+			if not EXPLOSION_SFX then EXPLOSION_SFX = LoadSound("MOD/snd/pb_explosion.ogg") end
+			PlaySound(EXPLOSION_SFX, pos)
+		end
+
+		local notYellow = not PaintBallsAreYellow(playerThrew)
+
+		-- Fire paintballs
+		for j=1, 60 do
+			SetRandomSeed(shared.seed + j)
+			local fireDir = dir and VecNormalize(VecAdd(dir, GetRandomDirection(0.33))) or GetRandomDirection()
+
+			local pPB = AllocPaintball(pos)
+
+			pPB.entity.velocity = VecScale(fireDir, 25)
+			pPB.die = 1.5 + GetTime()
+			pPB.gunName = "Paint Shrapnel"
+			pPB.damage = 1
+			pPB.entity.owner = playerThrew
+
+			if notYellow then
+				pPB.color = Vec(0,0,0)
+			end
+		end
+
+		if server then
+			-- Reset seed AFTER using it on both server and client
+			-- Can be unreliable at high latency
+			shared.seed = GetRandomInt(0,10000)
+
+			for id in Players() do
+				local playerPos = TransformToParentPoint(GetPlayerTransform(id), Vec(0, 1))
+				local dist = VecLength(VecSub(pos, playerPos))
+				if dist <= 5 then
+					local pHit = QueryRaycast(playerPos, VecNormalize(VecSub(pos, playerPos)), dist+0.1)
+					if not pHit then
+						local damage = 2.5
+						local falloff = damage / 5
+						local flAdjustedDamage = damage - (dist * falloff)
+						if flAdjustedDamage > 0 then ApplyPlayerDamage(id, flAdjustedDamage, "Paint Bomb", playerThrew) end
+					end
+				end
+			end
+
+			if notYellow then
+				Paint(pos, 3.5, "explosion", 0.33)
+			else
+				Paint(pos, 3.5, "spraycan", 0.33)
+			end
+		else
+			local col = notYellow and Vec(0,0,0) or Vec(1, 0.75, 0)
+
+			for l=0, 5 do
+				SetRandomSeed(GetTime()+l)
+
+				ParticleReset()
+				ParticleRadius(0.75)
+				ParticleGravity(GetRandomFloat(-5, -10))
+				ParticleAlpha(5, 0, "easein")
+				ParticleTile(5)
+				ParticleStretch(10)
+				ParticleColor(col[1], col[2], col[3])
+				ParticleCollide(1)
+				SpawnParticle(pos, GetRandomDirection(GetRandomFloat(0.8, 5)), 0.75)
+
+				ParticleReset()
+				ParticleRadius(1, 0.5)
+				ParticleAlpha(5, 0, "easein")
+				ParticleTile(1)
+				ParticleStretch(10)
+				ParticleColor(col[1], col[2], col[3])
+				ParticleCollide(1)
+				SpawnParticle(pos, GetRandomDirection(GetRandomFloat(0, 5)), 0.75)
+			end
+		end
 	end
 end

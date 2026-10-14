@@ -143,7 +143,7 @@ function C_Doub:Reload()
 			self:KF_SetAnim(C_Doub.ANIM_RELOADSTART)
 			self:MDL_PunchAng(Vec(-5, 0, 0))
 			self:MDL_PunchPos(Vec(0, -0.1, 0))
-			PlaySound(self.snds["reload"], self.muzzle, 300)
+			PlaySound(self.snds["reload"], self.muzzle)
 		end
 
 		-- hold gun straight
@@ -208,7 +208,7 @@ function C_Doub:WeaponIdle()
 			self:KF_SetAnim(C_Doub.ANIM_RELOADEND)
 			self:MDL_PunchAng(Vec(5, 0, 0))
 			self:MDL_PunchPos(Vec(0, 0.1, 0))
-			PlaySound(self.snds["reload"], self.muzzle, 300)
+			PlaySound(self.snds["reload"], self.muzzle)
 		end
 	end
 end

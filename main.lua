@@ -106,8 +106,12 @@ GLOBAL_HEADSHOTMULT = 2.0
 
 -- MAIN
 #include "script/paintballManager.lua"
+#include "script/classes/baseEnt.lua"
 #include "script/classes/baseWeap.lua"
 #include "script/classes/kfAnimations.lua"
+
+-- ENTITIES
+#include "script/ents/grenade.lua"
 
 -- WEAPONS
 #include "script/wpns/thrower.lua"
@@ -141,10 +145,10 @@ local GLOBAL_WEAPONS_AMNT  = #GLOBAL_WEAPONS
 local GLOBAL_ENTITIES_AMNT = #GLOBAL_ENTITIES
 
 -- pointers to each player's weapons
-PLAYER_WEAPONS = {}
+GLOBAL_PLYR_WEAPONS  = {}
 
 -- pointers to spawned enities
-SPAWNED_ENTITIES = {}
+GLOBAL_SPAWNED_ENTITIES = {}
 
 --============================================================================================
 --============================================================================================
@@ -158,7 +162,7 @@ local function CheckDeathReset()
    	for i=1, count do
 		local p, _, _ = GetEvent("playerdied", i)
 
-		local wpns = PLAYER_WEAPONS[p]
+		local wpns = GLOBAL_PLYR_WEAPONS[p]
 		for j=1, GLOBAL_WEAPONS_AMNT do
 			wpns[j]:initVars(p)
 		end
@@ -174,7 +178,7 @@ end
 
 -- Doesn't need used
 function server.tick(dt)
-   for p, wpns in pairs(PLAYER_WEAPONS) do
+   for p, wpns in pairs(GLOBAL_PLYR_WEAPONS) do
       local tool = GetPlayerTool(p)
 
       for i=1, GLOBAL_WEAPONS_AMNT do
@@ -189,6 +193,12 @@ function server.tick(dt)
          wpnPlyr:Tick(dt)
       end
    end
+
+   for _, ent in pairs(GLOBAL_SPAWNED_ENTITIES) do
+      ent:Tick(dt)
+   end
+
+   explosions()
 end
 
 -- Runs firing code
@@ -204,15 +214,15 @@ function server.update(dt)
    for p in PlayersAdded() do
 		AIM_RecoilSet(p, Vec())
 
-      PLAYER_WEAPONS[p] = {}
+      GLOBAL_PLYR_WEAPONS[p] = {}
       for weapon=1, GLOBAL_WEAPONS_AMNT do
          local wpnPlyr = baseWeap:new(GLOBAL_WEAPONS[weapon], p)
-		   PLAYER_WEAPONS[p][weapon] = wpnPlyr
+		   GLOBAL_PLYR_WEAPONS[p][weapon] = wpnPlyr
          wpnPlyr:init_player()
       end
 	end
 
-   for _, wpns in pairs(PLAYER_WEAPONS) do
+   for _, wpns in pairs(GLOBAL_PLYR_WEAPONS) do
       for i=1, GLOBAL_WEAPONS_AMNT do
          wpns[i]:Update(dt)
       end
@@ -229,6 +239,10 @@ function client.init()
    for weapon=1, GLOBAL_WEAPONS_AMNT do
       baseWeap.init_cl(GLOBAL_WEAPONS[weapon], weapon)
    end
+
+   for entity=1, GLOBAL_ENTITIES_AMNT do
+      baseEnt.init_cl(GLOBAL_ENTITIES[entity], entity)
+   end
 end
 
 -- Runs majority of weapon code
@@ -239,7 +253,7 @@ function client.tick(dt)
 
    CheckDeathReset()
 
-   for p, wpns in pairs(PLAYER_WEAPONS) do
+   for p, wpns in pairs(GLOBAL_PLYR_WEAPONS) do
       local tool = GetPlayerTool(p)
       for i=1, GLOBAL_WEAPONS_AMNT do
          local wpnPlyr = wpns[i]
@@ -260,6 +274,12 @@ function client.tick(dt)
    client.VFX_DynLightDraw(dt)
 
    client.settingsTick()
+
+   for _, ent in pairs(GLOBAL_SPAWNED_ENTITIES) do
+      ent:Tick(dt)
+   end
+
+   explosions()
 end
 
 -- Global VFX
@@ -269,23 +289,23 @@ function client.update(dt)
    for p in PlayersAdded() do
       AIM_RecoilSet(p, Vec())
       client.PWB_ANIMATOR[p] = ToolAnimator()
-      PLAYER_WEAPONS[p] = {}
+      GLOBAL_PLYR_WEAPONS[p] = {}
 
       for weapon=1, GLOBAL_WEAPONS_AMNT do
          local wpnPlyr = baseWeap:new(GLOBAL_WEAPONS[weapon], p)
-		   PLAYER_WEAPONS[p][weapon] = wpnPlyr
+		   GLOBAL_PLYR_WEAPONS[p][weapon] = wpnPlyr
          wpnPlyr:init_player()
       end
 	end
 
-   for _, wpns in pairs(PLAYER_WEAPONS) do
+   for _, wpns in pairs(GLOBAL_PLYR_WEAPONS) do
       for i=1, GLOBAL_WEAPONS_AMNT do
          wpns[i]:Update(dt)
       end
    end
 
    local tool = GetPlayerTool()
-   local wpns = PLAYER_WEAPONS[GetLocalPlayer()]
+   local wpns = GLOBAL_PLYR_WEAPONS[GetLocalPlayer()]
    for i=1, GLOBAL_WEAPONS_AMNT do
       if tool == wpns[i].toolID then
          wpns[i]:KF_Advance(dt)
@@ -301,14 +321,19 @@ function client.update(dt)
 end
 
 local function DontDraw()
-   return client.settingsDraw() or not PLAYER_WEAPONS or GetPlayerHealth() <= 0 or GetPlayerVehicle() ~= 0
+   return (
+      client.settingsDraw() or   -- Settings menu is drawn
+      not GLOBAL_PLYR_WEAPONS or -- No weapons
+      GetPlayerHealth() <= 0 or  -- Dead
+      GetPlayerVehicle() ~= 0    -- Driving
+   )
 end
 
 function client.draw()
    if DontDraw() then return end
 
    local tool = GetPlayerTool()
-   local wpns = PLAYER_WEAPONS[GetLocalPlayer()]
+   local wpns = GLOBAL_PLYR_WEAPONS[GetLocalPlayer()]
 
    for i=1, GLOBAL_WEAPONS_AMNT do
       if tool == wpns[i].toolID then
