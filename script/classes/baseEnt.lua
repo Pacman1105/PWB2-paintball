@@ -7,8 +7,8 @@ local curEntSlot = 1
 baseEnt = {}
 
 -- entity class constructor
--- to add a new entity just do WPNPTR = baseEnt:new(CHILD, owner) where CHILD is {}
-function baseEnt:new(obj, pos, ang, owner)
+-- run baseEnt:Create(CLASS, pos, ang, owner) to add a new entity
+function baseEnt:Create(obj, pos, ang, owner)
     owner = owner or -1
 
     -- make new table
@@ -106,18 +106,25 @@ function baseEnt:SpawnFlags()
     return addFlags(FENT_NONE, 0)
 end
 
+-- Sets the entities model to the body at XML[index], keep clBody nil
 function baseEnt:SetModel(XML, index, clBody)
     if client then
         self.body = clBody
         return
     end
 
-    local TDent = Spawn(XML, Transform(self.origin, GetBodyTransform(self.body).rot))
-    self.body = TDent[index]
+    if XML == 0 or not XML then 
+        self.body = nil
+        self:ClientEntCall(0, "SetModel", 0, 0, nil)
+    else
+        local TDent = Spawn(XML, Transform(self.origin, GetBodyTransform(self.body).rot))
+        self.body = TDent[index]
 
-    self:ClientEntCall(0, "SetModel", 0, 0, self.body)
+        self:ClientEntCall(0, "SetModel", 0, 0, self.body)
+    end
 end
 
+-- Sets the entities image sprite, doesn't override model
 function baseEnt:SetSprite(Sprite)
     if client then
         self.sprite = Sprite
@@ -128,13 +135,14 @@ end
 
 function baseEnt:SetOrigin(origin)
     self.origin = VecCopy(origin)
+    self.prevOrigin = VecCopy(origin)
     if server and self.body then
         SetBodyTransform(self.body, Transform(origin, GetBodyTransform(self.body).rot))
     end
 end
 
 -- Collision uses QueryShot, includes players by default
-function baseEnt:CollisionSettings()
+function baseEnt:QuerySettings()
     QueryRequire('visible physical')
     QueryRejectBody(self.body)
 end
@@ -184,7 +192,7 @@ function baseEnt:RunPhysics_Real(dt)
 
     local vel = GetBodyVelocity(self.body)
 
-    self:CollisionSettings()
+    self:QuerySettings()
     local didHit, dist, shape, playerId, _, normal = QueryShot(self.origin, VecNormalize(vel), VecLength(vel), self.collideRadius, self.owner)
     if not didHit or shape == self.lastTouched or playerId == self.lastTouched then
         return
@@ -217,7 +225,7 @@ function baseEnt:RunPhysics_Fake(dt)
         local betweenLen = VecLength(self.velocity) * dt
         local gravity = -dt * GetGravity()[2] * self.gravityMult
 
-        self:CollisionSettings()
+        self:QuerySettings()
         local hit, dist, shape, playerId, _, traceNormal = QueryShot(self.prevOrigin, betweenDir, betweenLen, self.collideRadius)
 
         if hit == true then
@@ -280,14 +288,14 @@ function baseEnt:RunPhysics_Fake(dt)
                 self.angles = VecScale(self.angles, 0.98)
 
                 if self.velocity[2] < 0 then
-                    self.velocity[2] = self.velocity[2] * 0.95
+                    self.velocity[2] = self.velocity[2] * 0.95 * self.gravityMult
                 end
 
-                self.velocity[2] = self.velocity[2] + ((math.sin(3 * GetTime()) * 0.00127) + 0.0127)
+                self.velocity[2] = self.velocity[2] + ((math.sin(3 * GetTime()) * 0.00127) + 0.0127) * self.gravityMult
             end
         end
     elseif self.nextActiveCheck <= GetTime() then
-        self:CollisionSettings()
+        self:QuerySettings()
         local hit = QueryShot(self.origin, VecNormalize(GetGravity()), self.collideRadius*1.25, self.collideRadius)
         if not hit then
             self.active = true
