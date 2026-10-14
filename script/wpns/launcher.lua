@@ -86,7 +86,7 @@ function C_GL:PrimaryAttack(dt)
 	else
 		PlayFireSound(self.snds["fire"], self.muzzle, 300)
 
-		server.fireGrenade(Transform(self.muzzle, GetPlayerEyeTransform(self.owner).rot), self.owner)
+		server.fireGrenade(Transform(self.muzzle, GetPlayerEyeTransform(self.owner).rot), 1, self.owner)
 	end
 
 	baseWeap.DepleteAmmo(self, 1, 1)

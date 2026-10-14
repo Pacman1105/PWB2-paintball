@@ -40,7 +40,7 @@ function server.fireExplosive(transform, grenType, owner)
 
     if grenType == 1 then
         rocket:SetModel("MOD/models/xml/gren_m203.xml", 1)
-    elseif grenType == 2
+    elseif grenType == 2 then
         rocket:SetModel("MOD/models/xml/gren_frag.xml", 1)
     else
         rocket:SetModel("MOD/models/xml/gren_m203.xml", 1)
