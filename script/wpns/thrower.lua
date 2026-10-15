@@ -76,11 +76,11 @@ function C_Spray:PrimaryAttack(dt)
 			client.PUNCH_Vec(Vec(GetRandomFloat(-1, 1), GetRandomFloat(-1, 1), GetRandomFloat(0, -0.2)))
 		end
 
-		local col = self:PaintBallsAreYellow() and Vec(1, 0.75, 0) or Vec(0,0,0)
+		local col = PaintBallsAreYellow(self.owner) and Vec(1, 0.75, 0) or Vec(0,0,0)
 		local _, _, _, dir = GetPlayerAimInfo(self.muzzle, 1, self.owner)
 		client.paintBallImpactVFX(self.muzzle, VecScale(dir, -1), 0.1, self.owner, col)
 	else
-		PlayFireSound(self.snds["fire"], self.muzzle, 300)
+		--PlayFireSound(self.snds["fire"], self.muzzle, 300)
 	end
 
 	baseWeap.DepleteAmmo(self, 1)

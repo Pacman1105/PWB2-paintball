@@ -6,17 +6,16 @@ C_GL = {} -- goes in GLOBAL_WEAPONS
 
 -- Static values for this specific weapon
 -- These don't need redefined in a weapon if a var is just the default value found in baseWeap
-C_GL.model	  = "launcher.xml" -- Path to the XML model file
+C_GL.model = "launcher.xml" -- Path to the XML model file
 
 C_GL.toolID   = "pwb2_pgl"   	         -- Used by the engine. Lowercase and no spaces
 C_GL.toolName = "Paint Grenade Launcher" -- Shown in killfeed
 C_GL.toolSlot = 4
-C_GL.toolPos  = 1			   		     -- placement in the hud column
+C_GL.toolPos  = 2			   		     -- placement in the hud column
 
 C_GL.ammoLoadedMax 	  = 6				   -- Max clip 	 	-- -1 for no clip (pulls from reserve)
 C_GL.ammoAltLoadedMax = 0 				   -- Max alt clip 	-- -1 for no clip (pulls from reserve) 0 for no alt fire
 C_GL.ammoPickupSize	  = C_GL.ammoLoadedMax -- Defaults to full mag
-C_GL.dmg_plyr		  = 0.34			   -- 0.0-1.0
 
 C_GL.flags = addFlags(0, FWPN_SV_CALLONCE_PRIM,
 						 FWPN_CLICK_PRIM) -- Weapon flags
@@ -60,7 +59,7 @@ function C_GL:PrimaryAttack(dt)
 			return
 		end
 
-		self:MDL_PunchPos(Vec(0, 0.1, 0.2))
+		self:MDL_PunchPos(Vec(0, 0.1, 0.3))
 
 		if self.isLocal then
 			self:ServerWpnCall("PrimaryAttack", dt)
@@ -76,7 +75,7 @@ function C_GL:PrimaryAttack(dt)
 			self.TargetCylAngle = self.cylAngle + 60
 		end
 
-		self:muzzleFlash(self.muzzle, 0.8, Vec(0.25, 0.25, 0.25))
+		self:muzzleFlash(self.muzzle, 1, Vec(0.7, 0.5, 0.3))
 
 		self.specialReload = 0
 
@@ -85,14 +84,13 @@ function C_GL:PrimaryAttack(dt)
 		end
 	else
 		PlayFireSound(self.snds["fire"], self.muzzle, 300)
-
-		server.fireGrenade(Transform(self.muzzle, GetPlayerEyeTransform(self.owner).rot), 1, self.owner)
 	end
+
+	E_Gren.Fire(Transform(self.muzzle, GetPlayerEyeTransform(self.owner).rot), 1, self.owner)
 
 	baseWeap.DepleteAmmo(self, 1, 1)
 
 	self.nextFire = self:GetNextAttackDelay(0.66)
-	self.nextAltFire = self.nextFire
 end
 
 function C_GL:Reload()
@@ -111,7 +109,7 @@ function C_GL:Reload()
 			--self:KF_SetAnim(C_GL.ANIM_RELOADSTART)
 			self:MDL_PunchAng(Vec(-2, 0, 10))
 			self:MDL_PunchPos(Vec(-0.1, 0, 0))
-			PlaySound(self.snds["reload"], self.muzzle, 300)
+			PlaySound(self.snds["reload"], self.muzzle)
 		end
 
 		-- hold gun straight
@@ -122,7 +120,6 @@ function C_GL:Reload()
 		self.timeWeaponIdle = curTime + 0.6
 
 		self.nextFire = self:GetNextAttackDelay(2.2)
-		self.nextAltFire = self.nextFire
 	elseif self.specialReload == 1 then
 		-- waiting for gun to move to side
 		if self.timeWeaponIdle > curTime then
@@ -133,8 +130,11 @@ function C_GL:Reload()
 		self.specialReload = 2
 
 		PlayFireSound(self.snds["load"], self.muzzle)
-		self.cylAngle = self.TargetCylAngle
-		self.TargetCylAngle = self.cylAngle - 60
+
+		if self.isLocal then
+			self.cylAngle = self.TargetCylAngle
+			self.TargetCylAngle = self.cylAngle - 60
+		end
 
 		self:MDL_PunchPos(Vec(0, 0, 0.1))
 		if self.isLocal then
@@ -178,7 +178,7 @@ function C_GL:WeaponIdle()
 			--self:KF_SetAnim(C_GL.ANIM_RELOADEND)
 			self:MDL_PunchAng(Vec(2, 0, -10))
 			self:MDL_PunchPos(Vec(0.1, 0, 0))
-			PlaySound(self.snds["reload"], self.muzzle, 300)
+			PlaySound(self.snds["reload"], self.muzzle)
 		end
 	end
 end

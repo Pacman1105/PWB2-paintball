@@ -1,4 +1,4 @@
--- SERVER ENTITY
+-- CLIENT ENTITY
 
 E_Gren = {}
 
@@ -12,12 +12,12 @@ end
 
 function E_Gren:Spawn()
     self.think = self.Explode
+    self.nextThink = GetTime() + 2.5
 end
 
 function E_Gren:Explode()
     self.origin = VecAdd(self.origin, Vec(0, 0.1, 0)) -- move out of ground
 
-    --DebugPrint(client and " ENT CLIENT" or " ENT SERVER")
     -- PostEvent automatically syncs (I hate you)
     PostEvent("pb_explode", self.origin, self.owner)
 
@@ -26,36 +26,25 @@ end
 
 function E_Gren:QuerySettings()
     QueryRequire('visible physical')
-    QueryRejectPlayer(self.owner)
     QueryRejectBody(self.body)
     QueryRejectBody(GetToolBody(self.owner))
 end
 
-function server.fireExplosive(transform, grenType, owner)
-    if client then entTypeError() return end
+function E_Gren.Fire(transform, grenType, owner)
+    if server then CurEntSlot = CurEntSlot + 1 return end
 
     local x, y, z = GetQuatEuler(transform.rot)
 
-    local rocket = baseEnt:Create(E_Gren, transform.pos, Vec(x, y, z), owner)
+    local grenade = baseEnt:Create(E_Gren, transform.pos, Vec(x, y, z), owner)
 
     if grenType == 1 then
-        rocket:SetModel("MOD/models/xml/gren_m203.xml", 1)
-    elseif grenType == 2 then
-        rocket:SetModel("MOD/models/xml/gren_frag.xml", 1)
+        grenade:MDL_SET("MOD/models/xml/gren_m203.xml", 1)
     else
-        rocket:SetModel("MOD/models/xml/gren_m203.xml", 1)
-        rocket.gravityMult = 0 -- fly STRAIHGHTB WAUGAIUGQIEI
+        grenade:MDL_SET("MOD/models/xml/gren_frag.xml", 1)
     end
 
-    local forward = Vec(0, 0, -1)
-	local angThrow = TransformToParentVec(transform, forward)
+	local angThrow = TransformToParentVec(transform, Vec(0, 0, -1))
+    grenade.velocity = VecAdd(VecScale(angThrow, 20), Vec(0, 1.27, 0))
 
-    if grenType ~= 3 then
-        rocket.nextThink = GetTime() + 2.5
-        rocket.velocity = VecAdd(VecScale(angThrow, 20), Vec(0, 1.27, 0))
-    else 
-        rocket.nextThink = GetTime() + 10
-        rocket.velocity = VecScale(angThrow, 40)
-        rocket.touch = rocket.Explode
-    end
+    return grenade
 end

@@ -1,0 +1,21 @@
+<group name="instance=MOD/models/xml/rpg.xml">
+	<group name="eye_space">
+		<location name="fp_action" tags="name=fp_action" pos="0.325 -0.375 -0.3" rot="5.0 10.0 0.0"/>
+		<location name="fp_action_optional" tags="name=fp_action_optional" pos="0.3 -0.4 -0.3" rot="0.0 5.0 0.0"/>
+		<location name="tp_action" tags="name=tp_action" pos="0.26 -0.24 -0.1" rot="0.0 0.0 0.0"/>
+		<location name="tp_action_crouch" tags="name=tp_action_crouch" pos="0.38 -0.36 0.0"/>
+		<location name="tp_jump" tags="name=tp_jump" pos="0.26 -0.16 -0.08" rot="10 5 5"/>
+		<location name="tp_crouch" tags="name=tp_crouch" pos="0.38 -0.36 0.0" rot="0.0 0.0 0.0"/>
+	</group>
+	<group name="tool_space">
+		<body dynamic="false">
+			<vox pos="-0.02 -0.14 -0.08" texture="12 0.65" blendtexture="3 0.15" file="MOD/models/rpg.vox" object="rocket_launcher" scale="0.2"/>
+			<vox pos="-0.096 0.23 -0.388" texture="12 0.65" blendtexture="3 0.15" file="MOD/models/rpg.vox" object="scope" scale="0.1"/>
+			<vox pos="0.0133 0.24 -0.36" texture="12 0.65" blendtexture="3 0.15" file="MOD/models/rpg.vox" object="sights" scale="0.133333333333333"/>
+		</body>
+		<location name="tp_action_rh" tags="name=tp_action_rh ik_hand" pos="0.0 -0.06 -0.18" rot="0.0 90.0 0.0"/>
+		<location name="tp_action_lh" tags="name=tp_action_lh ik_hand" pos="0.0 -0.04 -0.38" rot="0.0 90.0 0.0"/>
+		<location name="muzzle" tags="name=muzzle" pos="-0.02 0.14 -0.64" rot="0.0 0.0 0.0"/>
+	</group>
+</group>
+

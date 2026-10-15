@@ -440,7 +440,7 @@ function explosions()
 		else
 			local col = notYellow and Vec(0,0,0) or Vec(1, 0.75, 0)
 
-			for l=0, 5 do
+			for l=0, 7 do
 				SetRandomSeed(GetTime()+l)
 
 				ParticleReset()
@@ -450,8 +450,8 @@ function explosions()
 				ParticleTile(5)
 				ParticleStretch(10)
 				ParticleColor(col[1], col[2], col[3])
-				ParticleCollide(1)
-				SpawnParticle(pos, GetRandomDirection(GetRandomFloat(0.8, 5)), 0.75)
+				ParticleCollide(0, 1)
+				SpawnParticle(pos, GetRandomDirection(GetRandomFloat(1, 6)), 0.75)
 
 				ParticleReset()
 				ParticleRadius(1, 0.5)
@@ -459,8 +459,8 @@ function explosions()
 				ParticleTile(1)
 				ParticleStretch(10)
 				ParticleColor(col[1], col[2], col[3])
-				ParticleCollide(1)
-				SpawnParticle(pos, GetRandomDirection(GetRandomFloat(0, 5)), 0.75)
+				ParticleCollide(0, 1)
+				SpawnParticle(pos, GetRandomDirection(GetRandomFloat(0, 8)), 0.75)
 			end
 		end
 	end
