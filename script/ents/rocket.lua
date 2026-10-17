@@ -60,7 +60,7 @@ function E_Rocket:Explode()
     self:DeleteThis()
 end
 
-function E_Rocket:QuerySettings()
+function E_Rocket:PHYS_QuerySettings()
     QueryRequire('visible physical')
     QueryRejectBody(self.body)
     QueryRejectBody(GetToolBody(self.owner))

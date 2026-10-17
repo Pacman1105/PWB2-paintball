@@ -24,7 +24,7 @@ function E_Gren:Explode()
     self:DeleteThis()
 end
 
-function E_Gren:QuerySettings()
+function E_Gren:PHYS_QuerySettings()
     QueryRequire('visible physical')
     QueryRejectBody(self.body)
     QueryRejectBody(GetToolBody(self.owner))
