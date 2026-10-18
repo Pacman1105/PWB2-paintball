@@ -171,7 +171,7 @@ end
 -- Gets the returned values of the raytrace that last called Touch()
 function baseEnt:PHYS_GetLastTouchTrace()
     --    dist shape plyrHit surfNormal
-    return 0,    0,     0,     Vec()
+    return 0,   -1,    -1,     Vec()
 end
 
 --=========================================================================
@@ -208,13 +208,13 @@ function baseEnt:PHYS_RunReal(dt)
     local vel = GetBodyVelocity(self.body)
 
     self:PHYS_QuerySettings()
-    local didHit, dist, shape, playerId, _, normal = QueryShot(self.origin, VecNormalize(vel), VecLength(vel), self.collideRadius, self.owner)
+    local didHit, dist, shape, playerId, _, normal = QueryShot(self.origin, VecNormalize(vel), VecLength(vel) * dt + self.collideRadius, self.collideRadius, self.owner)
     if not didHit or shape == select(2, self:PHYS_GetLastTouchTrace()) or playerId == select(3, self:PHYS_GetLastTouchTrace()) then
         return
     end
 
     self.PHYS_GetLastTouchTrace = function()
-        return dist, shape, playerId, normal
+        return dist, shape > 0 and shape or -1, playerId > 0 and playerId or -1, normal
     end
 
     self:touch()
@@ -269,7 +269,7 @@ function baseEnt:PHYS_RunFake(dt)
             if betweenLen / dt > 1 then
                 if self:hasFunc("touch") then
                     self.PHYS_GetLastTouchTrace = function()
-                        return dist, shape, playerId, traceNormal
+                        return dist, shape > 0 and shape or -1, playerId > 0 and playerId or -1, traceNormal
                     end
 
                     self:touch()

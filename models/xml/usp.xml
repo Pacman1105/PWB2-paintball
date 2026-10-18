@@ -10,10 +10,9 @@
 	</group>
 	<group name="tool_space">
 		<body dynamic="false">
-			<vox pos="-0.027 -0.08 -0.04" texture="11 0.25" blendtexture="7 0.05" file="MOD/models/pistol.vox" object="left" scale="0.1"/>
-			<vox pos="0.008 -0.08 -0.04" texture="11 0.25" blendtexture="7 0.05" file="MOD/models/pistol.vox" object="right" scale="0.1"/>
-			<vox pos="-0.012 0.11 -0.04" rot="0.0 0.0 0.0" texture="8 0.05" blendtexture="7 0.05" file="MOD/models/pistol.vox" object="slide" scale="0.05"/>
-			<vox pos="-0.01 0.106 0.106" rot="30.0 0.0 0.0" texture="8 0.25" blendtexture="7 0.2" file="MOD/models/pistol.vox" object="hammer" scale="0.025"/>
+			<vox pos="-0.012 -0.07 -0.04" texture="11 0.25" blendtexture="7 0.05" file="MOD/models/pistol.vox" object="right" scale="0.05"/>
+			<vox pos="-0.012 0.11 -0.045" rot="0.0 0.0 0.0" texture="8 0.05" blendtexture="7 0.05" file="MOD/models/pistol.vox" object="slide" scale="0.05"/>
+			<vox pos="-0.012 0.106 0.111" rot="30.0 0.0 0.0" texture="8 0.25" blendtexture="7 0.2" file="MOD/models/pistol.vox" object="hammer" scale="0.05"/>
 			<vox pos="-0.012 0.125 -0.155" rot="0.0 0.0 0.0" texture="10 0.05" blendtexture="3 0.05" file="MOD/models/pistol.vox" object="barrel" scale="0.05"/>
 			<vox pos="-0.012 0.164 -0.055" rot="0.0 0.0 0.0" texture="10 0.05" blendtexture="3 0.05" file="MOD/models/pistol.vox" object="cover" scale="0.05"/>
 		</body>

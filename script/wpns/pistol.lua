@@ -96,7 +96,7 @@ function C_Pistol:PrimaryAttack(dt)
 
 			self:MDL_PunchAngReset(-4)
 			if client.PWB_ANIMATOR[self.owner].forceSecondaryActionPose then
-				self:MDL_PunchAng(Vec(GetRandomFloat(1.5, 3), 0.5, GetRandomFloat(0, 0.33)))
+				self:MDL_PunchAng(Vec(GetRandomFloat(2, 4), 0.5, GetRandomFloat(0, 0.33)))
 			else
 				self:MDL_PunchAng(Vec(GetRandomFloat(7, 8), 3, GetRandomFloat(0, 1)))
 			end

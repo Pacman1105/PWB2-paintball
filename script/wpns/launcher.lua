@@ -86,7 +86,7 @@ function C_GL:PrimaryAttack(dt)
 		PlayFireSound(self.snds["fire"], self.muzzle, 300)
 	end
 
-	E_Gren.Fire(Transform(self.muzzle, GetPlayerEyeTransform(self.owner).rot), 1, self.owner)
+	E_Gren.Fire(Transform(self.muzzle, GetPlayerEyeTransform(self.owner).rot), self.owner)
 
 	baseWeap.DepleteAmmo(self, 1, 1)
 

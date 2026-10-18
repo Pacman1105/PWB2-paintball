@@ -115,6 +115,7 @@ GLOBAL_HEADSHOTMULT = 2.0
 #include "script/ents/rocket.lua"
 
 -- WEAPONS
+#include "script/wpns/grenade.lua"
 #include "script/wpns/thrower.lua"
 #include "script/wpns/rpg.lua"
 #include "script/wpns/launcher.lua"

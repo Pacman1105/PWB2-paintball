@@ -30,21 +30,43 @@ function E_Gren:PHYS_QuerySettings()
     QueryRejectBody(GetToolBody(self.owner))
 end
 
-function E_Gren.Fire(transform, grenType, owner)
+function E_Gren.Fire(transform, owner)
     if server then CurEntSlot = CurEntSlot + 1 return end
 
     local x, y, z = GetQuatEuler(transform.rot)
 
     local grenade = baseEnt:Create(E_Gren, transform.pos, Vec(x, y, z), owner)
 
-    if grenType == 1 then
-        grenade:MDL_SET("MOD/models/xml/gren_m203.xml", 1)
-    else
-        grenade:MDL_SET("MOD/models/xml/gren_frag.xml", 1)
-    end
+    grenade:MDL_SET("MOD/models/xml/gren_m203.xml", 1)
 
 	local angThrow = TransformToParentVec(transform, Vec(0, 0, -1))
     grenade.velocity = VecAdd(VecScale(angThrow, 20), Vec(0, 1.27, 0))
 
     return grenade
+end
+
+function E_Gren.Throw(origin, angles, velocity, time, owner)
+    if server then CurEntSlot = CurEntSlot + 1 return end
+
+    local grenade = baseEnt:Create(E_Gren, origin, nil, owner)
+
+    grenade.flags = 0
+
+    grenade.nextThink = GetTime() + time
+
+    grenade.collideRadius = 0.1
+    grenade.touch = E_Gren.testTouch
+
+    grenade.velocity = VecCopy(velocity)
+    grenade:MDL_SET("MOD/models/xml/gren_frag.xml", 1)
+
+    SetBodyTransform(grenade.body, Transform(origin, QuatEuler(angles[1], angles[2], angles[3])))
+    SetBodyVelocity(grenade.body, velocity)
+    SetBodyAngularVelocity(grenade.body, TransformToParentVec(GetBodyTransform(grenade.body), angles))
+end
+
+function E_Gren:testTouch()
+    DebugPrint("TOUCHED")
+    local dist, shape, player, normal = self:PHYS_GetLastTouchTrace()
+    DebugPrint(dist .. " " .. shape .. " " .. player .. " " .. VecStr(normal))
 end

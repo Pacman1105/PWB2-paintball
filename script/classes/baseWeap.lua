@@ -279,7 +279,7 @@ function baseWeap:tickPlayer_cl(dt)
 	self.ammoTotal  = GetToolAmmo(self.toolID, self.owner)
 
 	local m = GetToolLocationWorldTransform("muzzle", self.owner)
-	self.muzzle	   = m and m.pos or Vec()
+	self.muzzle	    = m and m.pos or Vec()
 	self.eyePos     = GetPlayerEyeTransform(self.owner).pos
 
 	if self.isLocal then
@@ -632,8 +632,9 @@ function baseWeap:MDL_DecayPunchPos(dt)
 	local len = VecLength(self.recoilPos)
 	if len == 0 then
 		self.recoilPos = Vec()
-		return 
+		return
 	end
+
 	len = len - ((2 + len * self.recoilPosDecay) * dt)
 	len = math.max(len, 0)
 	self.recoilPos = VecScale(VecNormalize(self.recoilPos), len)
