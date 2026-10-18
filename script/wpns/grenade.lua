@@ -65,7 +65,7 @@ function C_GREN:Holster()
 	end
 end
 
-function C_GREN:throw(time)
+function C_GREN:Throw(time)
 	if time < 0.1 then PostEvent("pb_explode", self.muzzle, self.owner) return end
 
 	local angThrow = TransformToParentVec(GetPlayerEyeTransform(self.owner), Vec(0, 0, -1))
@@ -104,7 +104,7 @@ function C_GREN:throw(time)
 
 	if client then
 		if self.isLocal then
-			self:ServerWpnCall("throw", time)
+			self:ServerWpnCall("Throw", time)
 		end
 
 		PlaySound(self.snds["throw"], self.muzzle)
@@ -139,7 +139,7 @@ function C_GREN:WeaponIdle()
 		if time < 0 then
 			time = 0 end
 
-		self:throw(time)
+		self:Throw(time)
 
 		-- Stop "charging"
 		client.PWB_ANIMATOR[self.owner].forceSecondaryActionPose = false

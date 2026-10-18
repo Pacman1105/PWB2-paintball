@@ -54,13 +54,6 @@ PWB2 has a few ways of communicating with other mods, this section contains all 
 Bullet firing event arguments: ("pwb_shot", fire pos, hit location, hit shape, hit player, dmg_world, dmg_plyr)
 Player settings can be found at "savegame.mod.pwb.[HERE]" in the registry.
 
-==============================================================================================
-==============================================================================================
--- TO-DO
-==============================================================================================
-   -  alt fire can use another tools ammo (to add ammo pickups)
-
-   -  Source viewpunch and FOV lerping is 'laggy' sometimes (investigate)
 ============================================================================================]]
 
 #version 2
@@ -78,7 +71,7 @@ PWB_SETTING = {}
 
 client.PWB_ANIMATOR = {}
 
-client.MAX_TEMPENTS = 128
+client.MAX_TEMPENTS = 48
 
 -- LIBRARYS
 #include "script/lib/pwbtoolanimation.lua"
@@ -139,7 +132,7 @@ GLOBAL_HEADSHOTMULT = 2.0
 ----------------------------------------------------------------------------------------------
 
 -- Holds the pointers to the class reference of weapons/entities
-local GLOBAL_WEAPONS = loadWeaponClasses()
+local GLOBAL_WEAPONS  = loadWeaponClasses()
 local GLOBAL_ENTITIES = loadEntityClasses()
 
 -- only calculate this once
@@ -147,7 +140,7 @@ local GLOBAL_WEAPONS_AMNT  = #GLOBAL_WEAPONS
 local GLOBAL_ENTITIES_AMNT = #GLOBAL_ENTITIES
 
 -- pointers to each player's weapons
-GLOBAL_PLYR_WEAPONS  = {}
+GLOBAL_PLYR_WEAPONS     = {}
 
 -- pointers to spawned enities
 GLOBAL_SPAWNED_ENTITIES = {}
