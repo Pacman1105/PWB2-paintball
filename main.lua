@@ -169,6 +169,10 @@ function server.init()
    for weapon=1, GLOBAL_WEAPONS_AMNT do
       baseWeap.init_sv(GLOBAL_WEAPONS[weapon], weapon)
    end
+
+   for entity=1, GLOBAL_ENTITIES_AMNT do
+      baseEnt.init_sv(GLOBAL_ENTITIES[entity])
+   end
 end
 
 -- Doesn't need used
@@ -236,7 +240,7 @@ function client.init()
    end
 
    for entity=1, GLOBAL_ENTITIES_AMNT do
-      baseEnt.init_cl(GLOBAL_ENTITIES[entity], entity)
+      baseEnt.init_cl(GLOBAL_ENTITIES[entity])
    end
 end
 

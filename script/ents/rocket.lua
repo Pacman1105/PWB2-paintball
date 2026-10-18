@@ -2,6 +2,17 @@
 
 E_Rocket = {}
 
+--=========================================================================
+-- Define the entity and it's variables
+--=========================================================================
+
+-- Static values for this specific entity
+-- These don't need redefined in a entity if a var is just the default value found in baseEnt
+
+--=========================================================================
+-- Define the entity's static functions
+--=========================================================================
+
 function E_Rocket:Sounds()
     return {}
 end
@@ -10,9 +21,14 @@ function E_Rocket:SpawnFlags()
     return addFlag(FENT_NONE, FENT_FAKEPHYSICS)
 end
 
+--=========================================================================
+-- Entity's functions
+--=========================================================================
+
 function E_Rocket:Spawn()
     self.think = self.Ignite
     self.nextThink = GetTime() + 0.33
+
     self.gravityMult = 0.75
 end
 
@@ -65,6 +81,10 @@ function E_Rocket:PHYS_QuerySettings()
     QueryRejectBody(self.body)
     QueryRejectBody(GetToolBody(self.owner))
 end
+
+--=========================================================================
+-- Custom creation functions
+--=========================================================================
 
 function E_Rocket.Fire(transform, owner)
     local x, y, z = GetQuatEuler(transform.rot)

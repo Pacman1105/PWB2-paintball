@@ -2,6 +2,17 @@
 
 E_Gren = {}
 
+--=========================================================================
+-- Define the entity and it's variables
+--=========================================================================
+
+-- Static values for this specific entity
+-- These don't need redefined in a entity if a var is just the default value found in baseEnt
+
+--=========================================================================
+-- Define the entity's static functions
+--=========================================================================
+
 function E_Gren:Sounds()
     return {}
 end
@@ -9,6 +20,10 @@ end
 function E_Gren:SpawnFlags()
     return addFlag(FENT_NONE, FENT_FAKEPHYSICS)
 end
+
+--=========================================================================
+-- Entity's functions
+--=========================================================================
 
 function E_Gren:Spawn()
     self.think = self.Explode
@@ -30,6 +45,11 @@ function E_Gren:PHYS_QuerySettings()
     QueryRejectBody(GetToolBody(self.owner))
 end
 
+--=========================================================================
+-- Custom creation functions
+--=========================================================================
+
+-- Fire a GL grenade
 function E_Gren.Fire(transform, owner)
     if server then CurEntSlot = CurEntSlot + 1 return end
 
@@ -45,6 +65,7 @@ function E_Gren.Fire(transform, owner)
     return grenade
 end
 
+-- Throw a frag grenade
 function E_Gren.Throw(origin, angles, velocity, time, owner)
     if server then CurEntSlot = CurEntSlot + 1 return end
 
@@ -55,7 +76,6 @@ function E_Gren.Throw(origin, angles, velocity, time, owner)
     grenade.nextThink = GetTime() + time
 
     grenade.collideRadius = 0.1
-    grenade.touch = E_Gren.testTouch
 
     grenade.velocity = VecCopy(velocity)
     grenade:MDL_SET("MOD/models/xml/gren_frag.xml", 1)
@@ -63,10 +83,4 @@ function E_Gren.Throw(origin, angles, velocity, time, owner)
     SetBodyTransform(grenade.body, Transform(origin, QuatEuler(angles[1], angles[2], angles[3])))
     SetBodyVelocity(grenade.body, velocity)
     SetBodyAngularVelocity(grenade.body, TransformToParentVec(GetBodyTransform(grenade.body), angles))
-end
-
-function E_Gren:testTouch()
-    DebugPrint("TOUCHED")
-    local dist, shape, player, normal = self:PHYS_GetLastTouchTrace()
-    DebugPrint(dist .. " " .. shape .. " " .. player .. " " .. VecStr(normal))
 end
