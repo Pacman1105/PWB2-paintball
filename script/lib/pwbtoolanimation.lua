@@ -74,6 +74,9 @@ function ToolAnimator()
     anim.timeSinceFire = 100.0
     anim.solverOffset = Vec()
 
+    -- How much tool sways when moving
+    anim.swayMult = 1.0
+
     return anim
 end
 
@@ -264,7 +267,7 @@ function tickToolAnimator(toolAnimator, dt, defaultPoseTransform, playerId, swin
     if thirdPerson then
         SetToolTransformOverride(toolAnimator.transform, playerId)
     else
-        SetToolTransform(toolAnimator.transform, 1.0, playerId)
+        SetToolTransform(toolAnimator.transform, toolAnimator.swayMult, playerId)
     end
 end
 
