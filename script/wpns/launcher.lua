@@ -14,7 +14,7 @@ C_GL.toolSlot = 4
 C_GL.toolPos  = 2			   		     -- placement in the hud column
 
 C_GL.ammoLoadedMax 	  = 6				   -- Max clip 	 	-- -1 for no clip (pulls from reserve)
-C_GL.ammoAltLoadedMax = 0 				   -- Max alt clip 	-- -1 for no clip (pulls from reserve) 0 for no alt fire
+C_GL.ammoAltLoadedMax = WEAPON_NOALTAMMO   -- Max alt clip 	-- -1 for no clip (pulls from reserve)
 C_GL.ammoPickupSize	  = C_GL.ammoLoadedMax -- Defaults to full mag
 
 C_GL.flags = addFlags(0, FWPN_SV_CALLONCE_PRIM,

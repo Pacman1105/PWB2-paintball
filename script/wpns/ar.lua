@@ -15,7 +15,7 @@ C_AR.toolSlot = 3
 C_AR.toolPos  = 1		   -- placement in the hud column
 
 C_AR.ammoLoadedMax    = 30				   -- Max clip 	 	-- -1 for no clip (pulls from reserve)
-C_AR.ammoAltLoadedMax = 0 				   -- Max alt clip 	-- -1 for no clip (pulls from reserve) 0 for no alt fire
+C_AR.ammoAltLoadedMax = WEAPON_NOALTAMMO   -- Max alt clip 	-- -1 for no clip (pulls from reserve)
 C_AR.ammoPickupSize   = C_AR.ammoLoadedMax -- Defaults to full mag
 C_AR.dmg_plyr		  = 0.34			   -- 0.0-1.0
 

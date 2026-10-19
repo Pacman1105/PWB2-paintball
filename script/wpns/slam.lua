@@ -13,9 +13,9 @@ C_SLAM.toolName = "Paint S.L.A.M" -- Shown in killfeed
 C_SLAM.toolSlot = 4
 C_SLAM.toolPos  = 4			   	  -- placement in the hud column
 
-C_SLAM.ammoLoadedMax    = -1 -- Max clip 	 	-- -1 for no clip (pulls from reserve)
-C_SLAM.ammoAltLoadedMax = 0  -- Max alt clip 	-- -1 for no clip (pulls from reserve) 0 for no alt fire
-C_SLAM.ammoPickupSize   = 3  -- Defaults to full mag
+C_SLAM.ammoLoadedMax    = WEAPON_NOCLIP    -- Max clip 	 	-- -1 for no clip (pulls from reserve)
+C_SLAM.ammoAltLoadedMax = WEAPON_NOALTAMMO -- Max alt clip 	-- -1 for no clip (pulls from reserve)
+C_SLAM.ammoPickupSize   = 3  			   -- Defaults to full mag
 
 C_SLAM.flags = addFlags(0, FWPN_SV_CALLONCE_PRIM,
 						   FWPN_SV_CALLONCE_SEC,

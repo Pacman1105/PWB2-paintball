@@ -16,8 +16,7 @@ C_Sniper.toolSlot = 6
 C_Sniper.toolPos  = 1		   	   -- placement in the hud column
 
 C_Sniper.ammoLoadedMax 	  = 2					   -- Max clip 	 	-- -1 for no clip (pulls from reserve)
-C_Sniper.ammoAltLoadedMax = 0 					   -- Max alt clip 	-- -1 for no clip (pulls from reserve) 0 for no alt fire
-C_Sniper.ammoAltItemID	  = 0 					   -- WpnID of item to drain ammo for when altfiring
+C_Sniper.ammoAltLoadedMax = WEAPON_NOALTAMMO	   -- Max alt clip 	-- -1 for no clip (pulls from reserve)
 C_Sniper.ammoPickupSize	  = C_Sniper.ammoLoadedMax -- Defaults to full mag
 C_Sniper.dmg_plyr		  = 0.75				   -- 0.0-1.0
 

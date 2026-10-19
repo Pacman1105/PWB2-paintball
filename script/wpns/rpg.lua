@@ -13,9 +13,9 @@ C_RPG.toolName = "Paint Rocket Launcher" -- Shown in killfeed
 C_RPG.toolSlot = 4
 C_RPG.toolPos  = 1			   		     -- placement in the hud column
 
-C_RPG.ammoLoadedMax    = -1	-- Max clip 	 	-- -1 for no clip (pulls from reserve)
-C_RPG.ammoAltLoadedMax = 0 	-- Max alt clip 	-- -1 for no clip (pulls from reserve) 0 for no alt fire
-C_RPG.ammoPickupSize   = 3 	-- Defaults to full mag
+C_RPG.ammoLoadedMax    = WEAPON_NOCLIP    -- Max clip 	 	-- -1 for no clip (pulls from reserve)
+C_RPG.ammoAltLoadedMax = WEAPON_NOALTAMMO -- Max alt clip 	-- -1 for no clip (pulls from reserve)
+C_RPG.ammoPickupSize   = 3 			      -- Defaults to full mag
 
 C_RPG.flags = addFlags(0, FWPN_SV_CALLONCE_PRIM,
 						  FWPN_CLICK_PRIM) -- Weapon flags

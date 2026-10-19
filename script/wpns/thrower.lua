@@ -14,8 +14,8 @@ C_Spray.toolName = "Paint Thrower" -- Shown in killfeed
 C_Spray.toolSlot = 6
 --C_Spray.toolPos  = 2			  -- placement in the hud column
 
-C_Spray.ammoLoadedMax    = -1					 -- Max clip 	 	-- -1 for no clip (pulls from reserve)
-C_Spray.ammoAltLoadedMax = 0 				 	 -- Max alt clip 	-- -1 for no clip (pulls from reserve) 0 for no alt fire
+C_Spray.ammoLoadedMax    = WEAPON_NOCLIP		 -- Max clip 	 	-- -1 for no clip (pulls from reserve)
+C_Spray.ammoAltLoadedMax = WEAPON_NOALTAMMO	 	 -- Max alt clip 	-- -1 for no clip (pulls from reserve)
 C_Spray.ammoPickupSize   = 20 					 -- Defaults to full mag
 C_Spray.dmg_plyr		 = 0.07				 	 -- 0.0-1.0
 

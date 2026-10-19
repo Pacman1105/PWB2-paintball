@@ -14,7 +14,7 @@ C_Doub.toolSlot = 3
 C_Doub.toolPos	= 2			   		    -- placement in the hud column
 
 C_Doub.ammoLoadedMax 	= 2				       -- Max clip 	 	-- -1 for no clip (pulls from reserve)
-C_Doub.ammoAltLoadedMax = 0 				   -- Max alt clip 	-- -1 for no clip (pulls from reserve) 0 for no alt fire
+C_Doub.ammoAltLoadedMax = WEAPON_NOALTAMMO     -- Max alt clip 	-- -1 for no clip (pulls from reserve)
 C_Doub.ammoPickupSize	= C_Doub.ammoLoadedMax -- Defaults to full mag
 C_Doub.dmg_plyr		 	= 0.34				   -- 0.0-1.0
 

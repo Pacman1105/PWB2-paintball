@@ -15,8 +15,7 @@ C_Pistol.toolSlot = 3
 C_Pistol.toolPos  = 5		   -- placement in the hud column
 
 C_Pistol.ammoLoadedMax 	  = 10					   -- Max clip 	 	-- -1 for no clip (pulls from reserve)
-C_Pistol.ammoAltLoadedMax = 0 					   -- Max alt clip 	-- -1 for no clip (pulls from reserve) 0 for no alt fire
-C_Pistol.ammoAltItemID	  = 0 					   -- WpnID of item to drain ammo for when altfiring
+C_Pistol.ammoAltLoadedMax = WEAPON_NOALTAMMO 	   -- Max alt clip 	-- -1 for no clip (pulls from reserve)
 C_Pistol.ammoPickupSize	  = C_Pistol.ammoLoadedMax -- Defaults to full mag
 C_Pistol.dmg_plyr		  = 0.3				   -- 0.0-1.0
 
