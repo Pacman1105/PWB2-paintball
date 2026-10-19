@@ -61,7 +61,7 @@ function C_Shtgn:PrimaryAttack(dt)
 				self:KF_SetAnim(C_Shtgn.ANIM_PUMP)
 			end
 
-			PlaySound(self.snds["pump"], self.muzzle)
+			PlaySound(self.snds["pump"], self.muzzlePos)
 			return
 		end
 
@@ -73,13 +73,13 @@ function C_Shtgn:PrimaryAttack(dt)
 			client.VFX_DynLight(self.owner, 30, 0.25, Vec(0.7, 0.5, 0.3), Vec(), "muzzle")
 
 			self:MDL_PunchAngReset(-15)
-			self:MDL_PunchAng(Vec(GetRandomFloat(2, 3), GetRandomFloat(-0.5, 0.5), GetRandomFloat(-2, 1)))
+			self:MDL_PunchAng(Vec(GetRandomFloat(2, 3), GetRandomFloat(-1.2, -0.75), GetRandomFloat(-2, 1)))
 
 			--client.PUNCHBASIC_Axis(1, 5)
 			client.PUNCH_Vec(Vec(5, GetRandomFloat(-0.5, 0.5), 0))
 		end
 
-		self:muzzleFlash(self.muzzle, 0.8, Vec(0.25, 0.25, 0.25))
+		self:muzzleFlash(self.muzzlePos, 1.0, Vec(0.25, 0.25, 0.25))
 
 		self.specialReload = 0
 
@@ -89,10 +89,10 @@ function C_Shtgn:PrimaryAttack(dt)
 			self.timeWeaponIdle = 1
 		end
 	else
-		PlayFireSound(self.snds["fire"], self.muzzle, 300)
+		PlayFireSound(self.snds["fire"], self.muzzlePos, 300)
 	end
 
-	self:FirePaintballsPlayer(3, self.eyePos, GLOBAL_5DEGREES, 60, 75, 4)
+	self:FirePaintballsPlayer(3, self.eye.pos, GLOBAL_5DEGREES, 60, 75, 4)
 
 	baseWeap.DepleteAmmo(self, 1, 1)
 
@@ -113,7 +113,7 @@ function C_Shtgn:Reload()
 
 		if self.isLocal then
 			self:MDL_PunchAng(Vec(0, 2, -10))
-			PlaySound(self.snds["reload"], self.muzzle)
+			PlaySound(self.snds["reload"], self.muzzlePos)
 		end
 
 		if self.ammoLoaded == 0 then self.pumpTime = -1 end
@@ -135,7 +135,7 @@ function C_Shtgn:Reload()
 
 		self.specialReload = 2
 
-		PlayFireSound(self.snds["load"], self.muzzle)
+		PlayFireSound(self.snds["load"], self.muzzlePos)
 
 		self:MDL_PunchPos(Vec(0, 0.1, 0.1))
 		if self.isLocal then
@@ -184,14 +184,14 @@ function C_Shtgn:WeaponIdle()
 				self:KF_SetAnim(C_Shtgn.ANIM_PUMP)
 			end
 
-			PlaySound(self.snds["pump"], self.muzzle)
+			PlaySound(self.snds["pump"], self.muzzlePos)
 		end
 	end
 end
 
 function C_Shtgn:tickPlayer_cl(dt)
 	if self.pumpTime > 0 and self.pumpTime <= GetTime() then
-		PlaySound(self.snds["pump"], self.muzzle)
+		PlaySound(self.snds["pump"], self.muzzlePos)
 
 		if self.isLocal then
 			self:KF_SetAnim(C_Shtgn.ANIM_PUMP)

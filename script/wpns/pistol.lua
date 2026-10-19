@@ -96,7 +96,7 @@ function C_Pistol:PrimaryAttack(dt)
 
 			self:MDL_PunchAngReset(-4)
 			if client.PWB_ANIMATOR[self.owner].forceSecondaryActionPose then
-				self:MDL_PunchAng(Vec(GetRandomFloat(2, 4), 0.5, GetRandomFloat(0, 0.33)))
+				self:MDL_PunchAng(Vec(GetRandomFloat(4, 5), 1, GetRandomFloat(0, 0.33)))
 			else
 				self:MDL_PunchAng(Vec(GetRandomFloat(7, 8), 3, GetRandomFloat(0, 1)))
 			end
@@ -109,12 +109,12 @@ function C_Pistol:PrimaryAttack(dt)
 
 			self:MDL_PunchPos(punchVec)
 		else
-			self:MDL_PunchPos(Vec(GetRandomFloat(-0.05, 0.05), GetRandomFloat(0.0, 0.025), GetRandomFloat(0.05, 0.1)))
+			self:MDL_PunchPos(Vec(GetRandomFloat(-0.05, 0.05), GetRandomFloat(0.025, 0.05), GetRandomFloat(0.1, 0.15)))
 		end
 
-		self:muzzleFlash(self.muzzle, 1, Vec(0.25, 0.25, 0.25))
+		self:muzzleFlash(self.muzzlePos, 1, Vec(0.25, 0.25, 0.25))
 	else
-		PlayFireSound(self.snds["fire"], self.muzzle, 300)
+		PlayFireSound(self.snds["fire"], self.muzzlePos, 300)
 	end
 
 	baseWeap.DepleteAmmo(self, 1, 1)
@@ -122,7 +122,7 @@ function C_Pistol:PrimaryAttack(dt)
 	local inAds = (server and self.ads) or (client and client.PWB_ANIMATOR[self.owner].forceSecondaryActionPose)
 	local spread = self:GetPlayerSpread() * (inAds and 0.25 or 1)
 
-	self:FirePaintballsPlayer(1, self.eyePos, spread, 100, 150, 5)
+	self:FirePaintballsPlayer(1, self.eye.pos, spread, 100, 150, 5)
 
 	self.accuracyPenalty = self.accuracyPenalty + ACCURACY_SHOT_PENALTY_TIME
 

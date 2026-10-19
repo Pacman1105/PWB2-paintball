@@ -93,14 +93,14 @@ function C_SMG:PrimaryAttack(dt)
 			client.PUNCH_Vec(Vec(GetRandomFloat(-0.3, -0.5), GetRandomFloat(-0.6, 0.6), 0))
 		end
 
-		self:muzzleFlash(self.muzzle, 0.8, Vec(0.25, 0.25, 0.25))
+		self:muzzleFlash(self.muzzlePos, 0.8, Vec(0.25, 0.25, 0.25))
 	else
-		PlayFireSound(self.snds["fire"], self.muzzle, 300)
+		PlayFireSound(self.snds["fire"], self.muzzlePos, 300)
 	end
 
 	baseWeap.DepleteAmmo(self, 1, 1)
 
-	self:FirePaintballsPlayer(1, self.eyePos, self:GetPlayerSpread(), 100, 175, 5)
+	self:FirePaintballsPlayer(1, self.eye.pos, self:GetPlayerSpread(), 100, 175, 5)
 
 	self.accuracyPenalty = self.accuracyPenalty + ACCURACY_SHOT_PENALTY_TIME
 

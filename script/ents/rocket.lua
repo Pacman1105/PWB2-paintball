@@ -38,7 +38,7 @@ function E_Rocket:Ignite()
     self.think = self.Fly
     self.nextThink = GetTime()
     self.startFlightTime = GetTime()
-    self.velocity = self.idealVel
+    self.velocity = VecCopy(self.idealVel)
 end
 
 function E_Rocket:Fly()

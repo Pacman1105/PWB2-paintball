@@ -41,6 +41,7 @@ function C_RPG:PrimaryAttack(dt)
 	if client then
 		if self.ammoTotal <= 0 then
 			self:PlayEmptySound()
+			self.nextFire = GetTime() + 0.15
 			return
 		end
 
@@ -57,14 +58,14 @@ function C_RPG:PrimaryAttack(dt)
 			client.PUNCH_Vec(Vec(5, GetRandomFloat(-0.5, 0.5), 0))
 		end
 
-		self:muzzleFlash(self.muzzle, 2, Vec(0.7, 0.5, 0.3))
+		self:muzzleFlash(self.muzzlePos, 2, Vec(0.7, 0.5, 0.3))
 
 		self.pumpTime = GetTime() + 0.66
 	else
-		PlayFireSound(self.snds["fire"], self.muzzle, 300)
+		PlayFireSound(self.snds["fire"], self.muzzlePos, 300)
 	end
 
-	E_Rocket.Fire(Transform(self.muzzle, GetPlayerEyeTransform(self.owner).rot), self.owner)
+	E_Rocket.Fire(Transform(self.muzzlePos, self.eye.rot), self.owner)
 
 	baseWeap.DepleteAmmo(self, 1)
 
@@ -73,7 +74,7 @@ end
 
 function C_RPG:tickPlayer_cl(dt)
 	if self.pumpTime > 0 and self.pumpTime <= GetTime() then
-		PlaySound(self.snds["reload"], self.muzzle)
+		PlaySound(self.snds["reload"], self.muzzlePos)
 
 		self.pumpTime = 0
 	end

@@ -50,7 +50,7 @@ end
 
 function C_GREN:Deploy()
 	if client then
-		client.PWB_ANIMATOR[self.owner].maxActionPoseTime = 0.2
+		client.PWB_ANIMATOR[self.owner].maxActionPoseTime = 0.1
 		self.releaseThrow = -1
 
 		client.PWB_ANIMATOR[self.owner].timeSinceFire = 99999 -- don't do throw pose
@@ -66,9 +66,9 @@ function C_GREN:Holster()
 end
 
 function C_GREN:Throw(time)
-	if time < 0.1 then PostEvent("pb_explode", self.muzzle, self.owner) return end
+	if time < 0.1 then PostEvent("pb_explode", self.muzzlePos, self.owner) return end
 
-	local angThrow = TransformToParentVec(GetPlayerEyeTransform(self.owner), Vec(0, 0, -1))
+	local angThrow = TransformToParentVec(self.eye, Vec(0, 0, -1))
 
 	local dirX = angThrow[2]
 	if dirX < 0 then
@@ -100,14 +100,14 @@ function C_GREN:Throw(time)
 		angles = VecScale(VecNormalize(angles), GetRandomFloat(-8, 8))
 	end
 
-	E_Gren.Throw(self.muzzle, angles, vecThrow, time, self.owner)
+	E_Gren.Throw(self.muzzlePos, angles, vecThrow, time, self.owner)
 
 	if client then
 		if self.isLocal then
 			self:ServerWpnCall("Throw", time)
 		end
 
-		PlaySound(self.snds["throw"], self.muzzle)
+		PlaySound(self.snds["throw"], self.muzzlePos)
 	end
 end
 

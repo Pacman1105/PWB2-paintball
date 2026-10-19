@@ -63,12 +63,12 @@ function C_Doub:PrimaryAttack(dt)
 			client.VFX_DynLight(self.owner, 30, 0.25, Vec(0.7, 0.5, 0.3), Vec(), "muzzle")
 
 			self:MDL_PunchAngReset(-15)
-			self:MDL_PunchAng(Vec(GetRandomFloat(4, 6), GetRandomFloat(-0.5, 0.5), GetRandomFloat(-2, 1)))
+			self:MDL_PunchAng(Vec(GetRandomFloat(4, 6), GetRandomFloat(-1, -0.66), GetRandomFloat(-2, 1)))
 
 			client.PUNCH_Vec(Vec(5, GetRandomFloat(-0.5, 0.5), 0))
 		end
 
-		self:muzzleFlash(self.muzzle, 0.8, Vec(0.25, 0.25, 0.25))
+		self:muzzleFlash(self.muzzlePos, 1.5, Vec(0.25, 0.25, 0.25))
 
 		self.specialReload = 0
 
@@ -76,10 +76,10 @@ function C_Doub:PrimaryAttack(dt)
 			self.timeWeaponIdle = 1
 		end
 	else
-		PlayFireSound(self.snds["fire"], self.muzzle, 300)
+		PlayFireSound(self.snds["fire"], self.muzzlePos, 300)
 	end
 
-	self:FirePaintballsPlayer(4, self.eyePos, GLOBAL_15DEGREES, 60, 100, 4)
+	self:FirePaintballsPlayer(4, self.eye.pos, GLOBAL_15DEGREES, 60, 100, 4)
 
 	baseWeap.DepleteAmmo(self, 1, 1)
 
@@ -103,12 +103,12 @@ function C_Doub:SecondaryAttack(dt)
 			client.VFX_DynLight(self.owner, 30, 0.25, Vec(0.7, 0.5, 0.3), Vec(), "muzzle")
 
 			self:MDL_PunchAngReset(-15)
-			self:MDL_PunchAng(Vec(10, 3, -3))
+			self:MDL_PunchAng(Vec(10, -3, -3))
 
 			client.PUNCH_Vec(Vec(10, GetRandomFloat(1, 1), 0))
 		end
 
-		self:muzzleFlash(self.muzzle, 0.9, Vec(0.33, 0.33, 0.33))
+		self:muzzleFlash(self.muzzlePos, 2, Vec(0.33, 0.33, 0.33))
 
 		self.specialReload = 0
 
@@ -116,10 +116,10 @@ function C_Doub:SecondaryAttack(dt)
 			self.timeWeaponIdle = 1
 		end
 	else
-		PlayFireSound(self.snds["fireAlt"], self.muzzle, 300)
+		PlayFireSound(self.snds["fireAlt"], self.muzzlePos, 300)
 	end
 
-	self:FirePaintballsPlayer(8, self.eyePos, GLOBAL_20DEGREES, 60, 100, 4)
+	self:FirePaintballsPlayer(8, self.eye.pos, GLOBAL_20DEGREES, 60, 100, 4)
 
 	baseWeap.DepleteAmmo(self, 2, 2)
 
@@ -132,7 +132,7 @@ function C_Doub:Reload()
 		return end
 
 	local curTime = GetTime()
-	
+
 	-- check to see if we're ready to reload
 	if self.specialReload == 0 then
 		-- don't reload until recoil is done
@@ -143,7 +143,7 @@ function C_Doub:Reload()
 			self:KF_SetAnim(C_Doub.ANIM_RELOADSTART)
 			self:MDL_PunchAng(Vec(-5, 0, 0))
 			self:MDL_PunchPos(Vec(0, -0.1, 0))
-			PlaySound(self.snds["reload"], self.muzzle)
+			PlaySound(self.snds["reload"], self.muzzlePos)
 		end
 
 		-- hold gun straight
@@ -164,7 +164,7 @@ function C_Doub:Reload()
 
 		self.specialReload = 2
 
-		PlayFireSound(self.snds["load"], self.muzzle)
+		PlayFireSound(self.snds["load"], self.muzzlePos)
 
 		self:MDL_PunchPos(Vec(0, 0, 0.1))
 		if self.isLocal then
@@ -208,7 +208,7 @@ function C_Doub:WeaponIdle()
 			self:KF_SetAnim(C_Doub.ANIM_RELOADEND)
 			self:MDL_PunchAng(Vec(5, 0, 0))
 			self:MDL_PunchPos(Vec(0, 0.1, 0))
-			PlaySound(self.snds["reload"], self.muzzle)
+			PlaySound(self.snds["reload"], self.muzzlePos)
 		end
 	end
 end

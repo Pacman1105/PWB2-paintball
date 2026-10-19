@@ -106,8 +106,10 @@ GLOBAL_HEADSHOTMULT = 2.0
 -- ENTITIES
 #include "script/ents/grenade.lua"
 #include "script/ents/rocket.lua"
+#include "script/ents/SLAM.lua"
 
 -- WEAPONS
+#include "script/wpns/slam.lua"
 #include "script/wpns/grenade.lua"
 #include "script/wpns/thrower.lua"
 #include "script/wpns/rpg.lua"
@@ -136,8 +138,8 @@ local GLOBAL_WEAPONS  = loadWeaponClasses()
 local GLOBAL_ENTITIES = loadEntityClasses()
 
 -- only calculate this once
-local GLOBAL_WEAPONS_AMNT  = #GLOBAL_WEAPONS
-local GLOBAL_ENTITIES_AMNT = #GLOBAL_ENTITIES
+GLOBAL_WEAPONS_AMNT  = #GLOBAL_WEAPONS
+GLOBAL_ENTITIES_AMNT = #GLOBAL_ENTITIES
 
 -- pointers to each player's weapons
 GLOBAL_PLYR_WEAPONS     = {}
@@ -151,14 +153,29 @@ GLOBAL_SPAWNED_ENTITIES = {}
 --============================================================================================
 --============================================================================================
 
+-- Destroy weapons on player leave
+local function RemovePlayer(p)
+	local wpns = GLOBAL_PLYR_WEAPONS[p]
+	for j=1, GLOBAL_WEAPONS_AMNT do
+		wpns[j]:Destroy(true)
+	end
+
+	FREE(GLOBAL_PLYR_WEAPONS[p])
+   AIM_RecoilSet(p, nil)
+
+	if client then FREE(client.PWB_ANIMATOR[p]) end
+end
+
 -- Reset player data on death
 local function CheckDeathReset()
 	local count = GetEventCount("playerdied")
-   	for i=1, count do
+   for i=1, count do
 		local p, _, _ = GetEvent("playerdied", i)
 
 		local wpns = GLOBAL_PLYR_WEAPONS[p]
 		for j=1, GLOBAL_WEAPONS_AMNT do
+         wpns[j]:Destroy(false)
+
 			wpns[j]:initVars(p)
 		end
    end
@@ -197,7 +214,7 @@ function server.tick(dt)
       ent:Tick(dt)
    end
 
-   explosions()
+   TickPB_Explosions()
 end
 
 -- Runs firing code
@@ -227,7 +244,7 @@ function server.update(dt)
       end
    end
 
-   paintBallUpdate(dt, 10 --[[Gravity]])
+   TickPB(dt, 10 --[[Gravity]])
    server.dropletUpdate(dt, 10 --[[Gravity]])
 end
 
@@ -278,7 +295,8 @@ function client.tick(dt)
       ent:Tick(dt)
    end
 
-   explosions()
+   TickPB(dt, 10 --[[Gravity]])
+   TickPB_Explosions()
 end
 
 -- Global VFX
@@ -315,8 +333,6 @@ function client.update(dt)
    client.PUNCHBASIC_Apply(dt)
 
    client.TENT_Update(dt, 10 --[[Gravity]])
-
-   paintBallUpdate(dt, 10 --[[Gravity]])
 end
 
 local function DontDraw()

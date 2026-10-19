@@ -75,7 +75,7 @@ function C_GL:PrimaryAttack(dt)
 			self.TargetCylAngle = self.cylAngle + 60
 		end
 
-		self:muzzleFlash(self.muzzle, 1, Vec(0.7, 0.5, 0.3))
+		self:muzzleFlash(self.muzzlePos, 1, Vec(0.7, 0.5, 0.3))
 
 		self.specialReload = 0
 
@@ -83,10 +83,10 @@ function C_GL:PrimaryAttack(dt)
 			self.timeWeaponIdle = 1
 		end
 	else
-		PlayFireSound(self.snds["fire"], self.muzzle, 300)
+		PlayFireSound(self.snds["fire"], self.muzzlePos, 300)
 	end
 
-	E_Gren.Fire(Transform(self.muzzle, GetPlayerEyeTransform(self.owner).rot), self.owner)
+	E_Gren.Fire(Transform(self.muzzlePos, self.eye.rot), self.owner)
 
 	baseWeap.DepleteAmmo(self, 1, 1)
 
@@ -109,7 +109,7 @@ function C_GL:Reload()
 			--self:KF_SetAnim(C_GL.ANIM_RELOADSTART)
 			self:MDL_PunchAng(Vec(-2, 0, 10))
 			self:MDL_PunchPos(Vec(-0.1, 0, 0))
-			PlaySound(self.snds["reload"], self.muzzle)
+			PlaySound(self.snds["reload"], self.muzzlePos)
 		end
 
 		-- hold gun straight
@@ -129,7 +129,7 @@ function C_GL:Reload()
 
 		self.specialReload = 2
 
-		PlayFireSound(self.snds["load"], self.muzzle)
+		PlayFireSound(self.snds["load"], self.muzzlePos)
 
 		if self.isLocal then
 			self.cylAngle = self.TargetCylAngle
@@ -178,7 +178,7 @@ function C_GL:WeaponIdle()
 			--self:KF_SetAnim(C_GL.ANIM_RELOADEND)
 			self:MDL_PunchAng(Vec(2, 0, -10))
 			self:MDL_PunchPos(Vec(0.1, 0, 0))
-			PlaySound(self.snds["reload"], self.muzzle)
+			PlaySound(self.snds["reload"], self.muzzlePos)
 		end
 	end
 end
@@ -199,7 +199,7 @@ function C_GL:MDL_CustomAnimate(dt)
 		end
 
 		if self.cylinder ~= 0 and self.TargetCylAngle ~= self.cylAngle then
-			self.cylAngle = lerp(self.cylAngle, self.TargetCylAngle, 10*dt)
+			self.cylAngle = Lerp(self.cylAngle, self.TargetCylAngle, 10*dt)
 			attach.rot = QuatEuler(0, 0, -self.cylAngle)
 
 			local t = TransformToParentTransform(attach, self.cylTransform)

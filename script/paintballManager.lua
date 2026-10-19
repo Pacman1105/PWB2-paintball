@@ -1,9 +1,9 @@
-gpPaintballs = {}
-gpDroplets = {}
+AlivePaintballs = {}
+AliveDroplets = {}
 
-giCurrDroplets = 0
+DropletAmount = 0
 
-local MAX_DROPLETS = 600
+local MAX_DROPLETS = 128
 
 function PaintBallsAreYellow(p)
 	local newCol, r, g, b = GetPlayerColor(p)
@@ -64,27 +64,30 @@ function AllocPaintball(org)
 	pPB.die = 0
 	pPB.entity.origin = VecCopy(org)
 
-	local index = findArrayOpening(gpPaintballs)
-	gpPaintballs[index] = pPB
+	local index = findArrayOpening(AlivePaintballs)
+	AlivePaintballs[index] = pPB
 
-	return gpPaintballs[index]
+	return AlivePaintballs[index]
 end
 
-function paintBallUpdate(
+function TickPB(
     frametime,	-- Simulation time
 	cl_gravity)	-- True gravity on client
 
-    local uselength = #gpPaintballs
+    local uselength = #AlivePaintballs
 	if uselength == 0 then
 		return end
 
 	local client_time = GetTime()
 
     for i = 1, uselength do
-		local pPB = gpPaintballs[i] -- this errors sometimes, seemingly when one is deleted?
+		local pPB = AlivePaintballs[i] -- this errors sometimes, seemingly when one is deleted?
 		if pPB ~= nil then
 			if pPB.die - client_time < 0 then
-				table.remove(gpPaintballs, i)
+				if client then
+					client.paintBallImpactVFX(pPB.entity.origin, VecScale(VecNormalize(pPB.entity.velocity), -2), 0.2, 0, pPB.color)
+				end
+				table.remove(AlivePaintballs, i)
 			else
 				pPB.entity.prevOrigin = VecCopy(pPB.entity.origin)
 
@@ -154,17 +157,17 @@ function paintBallUpdate(
 										end
 									end
 
-									if giCurrDroplets < MAX_DROPLETS then
-										giCurrDroplets = giCurrDroplets + 8
+									if DropletAmount < MAX_DROPLETS then
+										DropletAmount = DropletAmount + 8
 										-- Better RNG
 										for i=1, 4 do
-											fireDroplet(VecAdd(pPB.entity.origin, VecScale(traceNormal2, 0.2)), GetRandomDirection(),
+											PB_FireDroplet(VecAdd(pPB.entity.origin, VecScale(traceNormal2, 0.2)), GetRandomDirection(),
 												math.random()*1.5, 0.75, 0.34, pPB.entity.owner, pPB.color, pPB.colorIsBlack)
 										end
 
 										-- More targetted
 										for i=1, 4 do
-											fireDroplet(VecAdd(pPB.entity.origin, VecScale(traceNormal2, 0.3)), VecAdd(GetRandomDirection(), VecScale(pPB.entity.velocity, 0.05)),
+											PB_FireDroplet(VecAdd(pPB.entity.origin, VecScale(traceNormal2, 0.3)), VecAdd(GetRandomDirection(), VecScale(pPB.entity.velocity, 0.05)),
 												math.random()*1.5, 0.75, 0.34, pPB.entity.owner, pPB.color, pPB.colorIsBlack)
 										end
 									end
@@ -175,10 +178,10 @@ function paintBallUpdate(
 								end
 							end
 						else -- reflect off wall
-							if server and giCurrDroplets < MAX_DROPLETS then
-								giCurrDroplets = giCurrDroplets + 2
+							if server and DropletAmount < MAX_DROPLETS then
+								DropletAmount = DropletAmount + 2
 								for i=1, 2 do
-									fireDroplet(VecAdd(pPB.entity.origin, VecScale(traceNormal, 0.1)), pPB.entity.velocity, math.random()*0.2, 0.5, 0.34, pPB.entity.owner, pPB.color, pPB.colorIsBlack)
+									PB_FireDroplet(VecAdd(pPB.entity.origin, VecScale(traceNormal, 0.1)), pPB.entity.velocity, math.random()*0.2, 0.5, 0.34, pPB.entity.owner, pPB.color, pPB.colorIsBlack)
 								end
 							end
 
@@ -221,17 +224,17 @@ function server.dropletUpdate(
 	cl_gravity)	-- True gravity on client
 
 	-- Nothing to simulate
-	if giCurrDroplets == 0 then
+	if DropletAmount == 0 then
 		return end
 
 	local client_time = GetTime()
 
-    for i = 1, giCurrDroplets do
-		local pDrop = gpDroplets[i] -- this errors sometimes, seemingly when one is deleted?
+    for i = 1, DropletAmount do
+		local pDrop = AliveDroplets[i] -- this errors sometimes, seemingly when one is deleted?
 		if pDrop ~= nil then
 			if pDrop.die - client_time < 0 then
-				table.remove(gpDroplets, i)
-				giCurrDroplets = giCurrDroplets - 1
+				table.remove(AliveDroplets, i)
+				DropletAmount = DropletAmount - 1
 			else
 				pDrop.entity.prevOrigin = VecCopy(pDrop.entity.origin)
 
@@ -311,19 +314,19 @@ function server.dropletUpdate(
 	end
 end
 
-local function AllocDroplet()
+local function allocDroplet()
 	local pDrop = newPaintBall()
 
-	local index = findArrayOpening(gpDroplets)
-	gpDroplets[index] = pDrop
+	local index = findArrayOpening(AliveDroplets)
+	AliveDroplets[index] = pDrop
 
-	return gpDroplets[index]
+	return AliveDroplets[index]
 end
 
-function fireDroplet(pos, dir, speed, life, paintAmnt, p, rgb, isBlack)
+function PB_FireDroplet(pos, dir, speed, life, paintAmnt, p, rgb, isBlack)
 	local velocity = VecScale(dir, speed)
 
-	local pDrop = AllocDroplet()
+	local pDrop = allocDroplet()
 
 	pDrop.bounceFactor = 1.0
 	pDrop.entity.origin = pos
@@ -383,11 +386,13 @@ function client.paintBallImpactVFX(pos, dir, damage, playerhit, col)
 	end
 end
 
-function explosions()
+function TickPB_Explosions()
 	local count = GetEventCount("pb_explode")
    	for i=1, count do
 		local pos, playerThrew, dir = GetEvent("pb_explode", i)
-		DebugPrint(i .. (client and " CLIENT" or " SERVER"))
+
+		if PWB_SETTING.debug then DebugPrint("EXPLOSION EVENT: " .. i .. (client and " CLIENT" or " SERVER")) end
+
 		if client then
 			if not EXPLOSION_SFX then EXPLOSION_SFX = LoadSound("MOD/snd/pb_explosion.ogg") end
 			PlaySound(EXPLOSION_SFX, pos)
