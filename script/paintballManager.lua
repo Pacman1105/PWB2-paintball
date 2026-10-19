@@ -148,11 +148,11 @@ function TickPB(
 									end
 
 									if pPB.colorIsBlack == false then
-										for i = 1, 3 do
+										for j = 1, 3 do
 											Paint(VecAdd(pPB.entity.origin, GetRandomDirection(0.4)), 0.35, "spraycan", 0.5)
 										end
 									else
-										for i = 1, 3 do
+										for j = 1, 3 do
 											Paint(VecAdd(pPB.entity.origin, GetRandomDirection(0.4)), 0.35, "explosion", 0.5)
 										end
 									end
@@ -160,13 +160,13 @@ function TickPB(
 									if DropletAmount < MAX_DROPLETS then
 										DropletAmount = DropletAmount + 8
 										-- Better RNG
-										for i=1, 4 do
+										for j=1, 4 do
 											PB_FireDroplet(VecAdd(pPB.entity.origin, VecScale(traceNormal2, 0.2)), GetRandomDirection(),
 												math.random()*1.5, 0.75, 0.34, pPB.entity.owner, pPB.color, pPB.colorIsBlack)
 										end
 
 										-- More targetted
-										for i=1, 4 do
+										for j=1, 4 do
 											PB_FireDroplet(VecAdd(pPB.entity.origin, VecScale(traceNormal2, 0.3)), VecAdd(GetRandomDirection(), VecScale(pPB.entity.velocity, 0.05)),
 												math.random()*1.5, 0.75, 0.34, pPB.entity.owner, pPB.color, pPB.colorIsBlack)
 										end
@@ -180,7 +180,7 @@ function TickPB(
 						else -- reflect off wall
 							if server and DropletAmount < MAX_DROPLETS then
 								DropletAmount = DropletAmount + 2
-								for i=1, 2 do
+								for j=1, 2 do
 									PB_FireDroplet(VecAdd(pPB.entity.origin, VecScale(traceNormal, 0.1)), pPB.entity.velocity, math.random()*0.2, 0.5, 0.34, pPB.entity.owner, pPB.color, pPB.colorIsBlack)
 								end
 							end
@@ -207,7 +207,7 @@ function TickPB(
 					ParticleReset()
 					ParticleRadius(0.15)
 					ParticleGravity(cl_gravity)
-					ParticleAlpha(5, 0, "easein") 
+					ParticleAlpha(5, 0, "easein")
 					ParticleTile(3)
 					ParticleStretch(10)
 					ParticleColor(pPB.color[1], pPB.color[2], pPB.color[3])

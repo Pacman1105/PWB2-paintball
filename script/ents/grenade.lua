@@ -31,7 +31,7 @@ function E_Gren:Spawn()
 end
 
 function E_Gren:Explode()
-    self.origin = VecAdd(self.origin, Vec(0, 0.1, 0)) -- move out of ground
+    self.origin = VecAdd(self.origin, Vec(0, 0.3, 0)) -- move out of ground
 
     -- PostEvent automatically syncs (I hate you)
     PostEvent("pb_explode", self.origin, self.owner)
