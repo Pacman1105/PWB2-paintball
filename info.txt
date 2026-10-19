@@ -1,6 +1,6 @@
-name = [PWB2] WEAPON BASE TEST PACK
+name = [PWB2] Paintball Pack
 author = PackMan09
-description = [noupload]A completely revamped version of my weapon base! Contains 5 weapons to show new features
+description = [noupload]A pack of 11 paintball themed weapons. Including 6 guns, 4 explosives and a paint thrower!
 tags = Tool
 version = 2
 preview_image = preview.png
