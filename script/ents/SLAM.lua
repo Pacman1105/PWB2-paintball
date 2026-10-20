@@ -83,6 +83,10 @@ function E_SLAM:Explode()
 
     -- PostEvent automatically syncs (I hate you)
     if client then
+        if not self.laserDist then
+            self.bodyTransform = GetBodyTransform(self.body)
+        end
+
         local laserMineOrg = TransformToParentTransform(self.bodyTransform, Transform(Vec(-0.14, 0.2, -0.3), self.bodyTransform.rot))
         self.origin = self.laserDist and laserMineOrg.pos or VecAdd(self.origin, Vec(0, 0.1, 0)) -- move out of ground
 

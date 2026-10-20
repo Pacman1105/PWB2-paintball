@@ -69,6 +69,12 @@ function C_Pistol:Holster()
 	end
 end
 
+function C_Pistol:Deploy()
+	if self.isLocal and self.ammoLoaded == 0 then
+		self:KF_SetAnim(C_Pistol.ANIM_EMPTYIDLE)
+	end
+end
+
 function C_Pistol:GetPlayerSpread()
 	local ramp = RemapValClamped(	self.accuracyPenalty,
 							    	0.0,
@@ -92,7 +98,7 @@ function C_Pistol:PrimaryAttack(dt)
 		if self.isLocal then
 			self:ServerWpnCall("PrimaryAttack", 0, dt)
 
-			self:KF_SetAnim(C_Pistol.ANIM_FIRE)
+			self:KF_SetAnim(self.ammoLoaded <= 1 and C_Pistol.ANIM_FIREEMPTY or C_Pistol.ANIM_FIRE)
 
 			client.VFX_DynLight(self.owner, 25, 0.1, Vec(0.7, 0.5, 0.3), Vec(), "muzzle")
 
@@ -129,7 +135,7 @@ function C_Pistol:PrimaryAttack(dt)
 	self.accuracyPenalty = self.accuracyPenalty + ACCURACY_SHOT_PENALTY_TIME
 
 	SetRandomSeed(shared.seed)
-	AIM_RecoilAdd(self.owner, Vec(2, GetRandomFloat(-0.25, 1.33), 0))
+	AIM_RecoilAdd(self.owner, Vec(2, GetRandomFloat(0.1, 1.33), 0))
 	if server then shared.seed = GetRandomInt(0,10000) end
 
 	self.nextFire = self:GetNextAttackDelay(0.5)
@@ -141,7 +147,7 @@ function C_Pistol:Reload()
 	self.soonestFire = math.huge
 
 	if self.isLocal then
-		--self:KF_SetAnim(C_Pistol.ANIM_RELOAD)
+		self:KF_SetAnim(self.ammoLoaded == 0 and C_Pistol.ANIM_RELOADEMPTY or C_Pistol.ANIM_RELOAD)
 
 		self:PlayFollowingSound(self.snds["reloadLoop"], 0.9)
 
@@ -218,6 +224,7 @@ function C_Pistol:tickPlayer_cl(dt)
 
 	if self.isLocal then
 		if client.PWB_ANIMATOR[self.owner].forceSecondaryActionPose then
+			SetBool("hud.aimdot", false)
 			self.idleCycleScale = 0.05
 		end
 	end

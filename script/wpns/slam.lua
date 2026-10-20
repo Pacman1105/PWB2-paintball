@@ -96,6 +96,9 @@ function C_SLAM:PrimaryAttack(dt)
 
 	local _,pos,_,angThrow = GetPlayerAimInfo(self.eye.pos, 3.0, self.owner)
 
+
+	QueryRejectBody(FindBody("entIndex" .. CurEntSlot+1, true))
+
 	local hit, dist, normal = QueryRaycast(pos, TransformToParentVec(self.eye, Vec(0, 0, -1)), 3.0)
 
 	if hit then -- place tripmine

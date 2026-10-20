@@ -46,8 +46,160 @@ local fire = Anim(
     {4, {0, 0, 0.0},     QuatEuler(0, 0, 0)}
 )
 
+local fireEmpty = Anim(
+    {2, {0, 0, 0.0},     QuatEuler(0, 0, 0)},
+    {3, {0, 0, 0.0},     QuatEuler(0, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(0, 0, 0)},
+    0,
+    {2, {0, 0, 0.03},    QuatEuler(0, 0, 0)},
+    {3, {0, 0, -0.02},   QuatEuler(-45, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(1.5, 0, 0)},
+    0,
+    {2, {0, 0, 0.05},    QuatEuler(0, 0, 0)},
+    {3, {0, 0, -0.015},  QuatEuler(-40, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(2.5, 0, 0)},
+    0,
+    {2, {0, 0, 0.07},    QuatEuler(0, 0, 0)},
+    {3, {0, 0, -0.01},   QuatEuler(-35, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(3.5, 0, 0)},
+    0,
+    {2, {0, 0, 0.08},    QuatEuler(0, 0, 0)},
+    {3, {0, 0, 0.0},     QuatEuler(-27.5, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(4.5, 0, 0)},
+    0,
+    {2, {0, 0, 0.075},   QuatEuler(0, 0, 0)},
+    {3, {0, 0, 0.0},     QuatEuler(-20, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(5, 0, 0)},
+    0,
+    {3, {0, 0, 0.0},     QuatEuler(15, 0, 0)},
+    0,
+    {3, {0, 0, 0.0},     QuatEuler(10, 0, 0)},
+    0,
+    {3, {0, 0, 0.0},     QuatEuler(5, 0, 0)},
+    0,
+    {3, {0, 0, 0.0},     QuatEuler(0, 0, 0)}
+)
+
 C_Pistol.ANIM_FIRE = 1 -- just for readability
+C_Pistol.ANIM_FIREEMPTY = 2 -- just for readability
+
+local reload = Anim(
+    {2, {0, 0, 0.0},     QuatEuler(0, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(0, 0, 0)},
+    0,0,
+    0,0,
+    0,0,
+    0,0,
+    0,0,
+    0,0,
+    {2, {0, 0, 0.03},    QuatEuler(0, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(1.5, 0, 0)},
+    0,
+    {2, {0, 0, 0.05},    QuatEuler(0, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(2.5, 0, 0)},
+    0,
+    {2, {0, 0, 0.07},    QuatEuler(0, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(3.5, 0, 0)},
+    0,
+    {2, {0, 0, 0.08},    QuatEuler(0, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(4.5, 0, 0)},
+    0,
+    {2, {0, 0, 0.075},   QuatEuler(0, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(5, 0, 0)},
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    {2, {0, 0, 0.06},    QuatEuler(0, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(4, 0, 0)},
+    0,
+    {2, {0, 0, 0.05},    QuatEuler(0, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(3, 0, 0)},
+    0,
+    {2, {0, 0, 0.04},    QuatEuler(0, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(2, 0, 0)},
+    0,
+    {2, {0, 0, 0.02},    QuatEuler(0, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(1, 0, 0)},
+    0,
+    {2, {0, 0, 0.01},    QuatEuler(0, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(0.5, 0, 0)},
+    0,
+    {2, {0, 0, 0.0},     QuatEuler(0, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(0, 0, 0)}
+)
+
+local reloadEmpty = Anim(
+    {2, {0, 0, 0.075},   QuatEuler(0, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(5, 0, 0)},
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    0,0,0,
+    {2, {0, 0, 0.06},    QuatEuler(0, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(4, 0, 0)},
+    0,
+    {2, {0, 0, 0.05},    QuatEuler(0, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(3, 0, 0)},
+    0,
+    {2, {0, 0, 0.04},    QuatEuler(0, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(2, 0, 0)},
+    0,
+    {2, {0, 0, 0.02},    QuatEuler(0, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(1, 0, 0)},
+    0,
+    {2, {0, 0, 0.01},    QuatEuler(0, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(0.5, 0, 0)},
+    0,
+    {2, {0, 0, 0.0},     QuatEuler(0, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(0, 0, 0)}
+)
+
+C_Pistol.ANIM_RELOAD      = 3 -- just for readability
+C_Pistol.ANIM_RELOADEMPTY = 4 -- just for readability
+
+local idleEmpty = Anim(
+    {2, {0, 0, 0.075},   QuatEuler(0, 0, 0)},
+    {4, {0, 0, 0.0},     QuatEuler(5, 0, 0)}
+)
+
+C_Pistol.ANIM_EMPTYIDLE = 5 -- just for readability
 
 C_Pistol.anims = {
-    fire
+    fire,
+    fireEmpty,
+    reload,
+    reloadEmpty,
+    idleEmpty
 }
