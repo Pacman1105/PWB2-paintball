@@ -14,7 +14,7 @@
 			<vox pos="-0.012 0.11 -0.045" rot="0.0 0.0 0.0" texture="8 0.05" blendtexture="7 0.05" file="MOD/models/pistol.vox" object="slide" scale="0.05"/>
 			<vox pos="-0.012 0.106 0.111" rot="30.0 0.0 0.0" texture="8 0.25" blendtexture="7 0.2" file="MOD/models/pistol.vox" object="hammer" scale="0.05"/>
 			<vox pos="-0.012 0.125 -0.155" rot="0.0 0.0 0.0" texture="10 0.05" blendtexture="3 0.05" file="MOD/models/pistol.vox" object="barrel" scale="0.05"/>
-			<vox pos="-0.012 0.164 -0.055" rot="0.0 0.0 0.0" texture="10 0.05" blendtexture="3 0.05" file="MOD/models/pistol.vox" object="cover" scale="0.05"/>
+			<vox pos="-0.012 0.135 -0.0525" rot="0.0 0.0 0.0" texture="10 0.05" blendtexture="3 0.05" file="MOD/models/pistol.vox" object="cover" scale="0.0495"/>
 		</body>
 		<location name="tp_action_rh" tags="name=tp_action_rh ik_hand" pos="0.0 0.05 0.0" rot="0.0 90.0 0.0"/>
 		<location name="tp_secaction_rh" tags="name=tp_secaction_rh ik_hand" pos="0.0 0.05 0.0" rot="0.0 90.0 0.0"/>
