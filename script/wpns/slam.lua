@@ -96,10 +96,11 @@ function C_SLAM:PrimaryAttack(dt)
 
 	local _,pos,_,angThrow = GetPlayerAimInfo(self.eye.pos, 3.0, self.owner)
 
+	local hit, dist, normal, shape = QueryRaycast(pos, TransformToParentVec(self.eye, Vec(0, 0, -1)), 3.0)
 
-	QueryRejectBody(FindBody("entIndex" .. CurEntSlot+1, true))
-
-	local hit, dist, normal = QueryRaycast(pos, TransformToParentVec(self.eye, Vec(0, 0, -1)), 3.0)
+	-- fix server raycast hitting thrown slam
+	-- TO-DO: would be best to just send the hit values to server instead of raycasting again
+	if HasTag(GetShapeBody(shape), "thrownSlam") then hit = false end
 
 	if hit then -- place tripmine
 		local GrenTrans = Transform(VecAdd(pos, VecScale(TransformToParentVec(self.eye, Vec(0, 0, -1)), dist + 0.1)), QuatLookAt(Vec(), normal))

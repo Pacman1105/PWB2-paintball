@@ -124,6 +124,7 @@ function E_SLAM.Throw(transform, velocity, owner)
 
     grenade:MDL_SET("MOD/models/xml/gren_satch.xml", 1)
 
+    SetTag(grenade.body, "thrownSlam")
     SetBodyVelocity(grenade.body, velocity)
     SetBodyAngularVelocity(grenade.body, TransformToParentVec(GetPlayerEyeTransform(owner), Vec(0, 10.16, 0)))
 
