@@ -5,22 +5,6 @@ DropletAmount = 0
 
 local MAX_DROPLETS = 128
 
-function PaintBallsAreYellow(p)
-	local newCol, r, g, b = GetPlayerColor(p)
-	if newCol then
-		if not yellow then
-			yellow = Vec(r, g, b)
-			return true
-		end
-
-		if not VecStr(Vec(r, g, b)) == VecStr(yellow) then
-			return false
-		end
-	end
-
-	return true
-end
-
 local function newCLent()
 	return {
 		--entity_state_t curstate,  -- The state information from the last message received from server
@@ -415,6 +399,7 @@ function TickPB_Explosions()
 
 			if notYellow then
 				pPB.color = Vec(0,0,0)
+				pPB.colorIsBlack = true
 			end
 		end
 

@@ -103,6 +103,31 @@ end
 -- Weapon UTILs
 ----------------------------------------------------------------------------------------------
 
+local yellow = false
+function PaintBallsAreYellow(p)
+	local newCol, r, g, b = GetPlayerColor(p)
+	if newCol then
+		if not yellow then
+			yellow = Vec(r, g, b)
+			return true
+		end
+
+		if not VecEqual(Vec(r, g, b), yellow) then
+			return false
+		end
+	end
+
+	return true
+end
+
+function VecEqual(vec1, vec2)
+	for i=1, 3 do
+		if vec1[i] ~= vec2[i] then return false end
+	end
+
+	return true
+end
+
 function RemapValClamped(val, A, B, C, D)
 	if ( A == B ) then
 		if val >= B then return D else return C end

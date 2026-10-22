@@ -763,8 +763,6 @@ local function matPenetratable(mat)
 	return mat == "glass" or mat == "plastic" or mat == "plaster"
 end
 
-yellow = false
-
 function baseWeap:FirePaintballsPlayer(shots, pos, spreadRad, range, speed, life)
 	for i=1, shots do
 		local posUse, dir = AIM_GetSpreadedAim(pos, spreadRad, range, self.owner, i)
@@ -782,14 +780,9 @@ function baseWeap:FirePaintballsPlayer(shots, pos, spreadRad, range, speed, life
 		pPB.gunName = self.toolName
 		pPB.damage = self.dmg_plyr
 
-		local newCol, r, g, b = GetPlayerColor(self.owner)
-		if newCol then
-			if not yellow then
-				yellow = Vec(r, g, b)
-			elseif not VecStr(Vec(r, g, b)) == VecStr(yellow) then
-				pPB.color = Vec(0,0,0)
-				pPB.colorIsBlack = true
-			end
+		if not PaintBallsAreYellow(self.owner) then
+			pPB.color = Vec(0,0,0)
+			pPB.colorIsBlack = true
 		end
 
 		pPB.entity.owner = self.owner
