@@ -66,6 +66,8 @@ function C_GREN:Holster()
 end
 
 function C_GREN:Throw(time)
+	baseWeap.DepleteAmmo(self, 1)
+
 	if time < 0.1 then PostEvent("pb_explode", self.muzzlePos, self.owner) return end
 
 	local angThrow = TransformToParentVec(self.eye, Vec(0, 0, -1))
