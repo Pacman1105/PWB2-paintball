@@ -14,7 +14,9 @@ E_Rocket = {}
 --=========================================================================
 
 function E_Rocket:Sounds()
-    return {}
+    return {
+        {"tools/booster-loop.ogg", "cl", "fly", true, true, 50}
+    }
 end
 
 function E_Rocket:SpawnFlags()
@@ -48,6 +50,8 @@ function E_Rocket:Fly()
     end
 
     if client then
+        PlayLoop(self.snds["fly"], self.origin)
+
         PointLight(self.origin, 0.7, 0.5, 0.3, 1)
 
         ParticleReset()

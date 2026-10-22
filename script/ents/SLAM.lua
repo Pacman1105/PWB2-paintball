@@ -34,8 +34,19 @@ function E_SLAM:Activate()
     PlaySound(self.snds["activate"], self.origin)
 
     self.bodyTransform = Transform(self.origin)
+
     self.think = self.Tripwire
     self.nextThink = 0
+end
+
+local END_SPRITE = false
+local function endSpr(pos, size, color)
+	color = color or Vec(1, 1, 1)
+	local t = Transform(pos, GetCameraTransform().rot)
+
+	if not END_SPRITE then END_SPRITE = LoadSprite("gfx/glare.png") end
+
+	DrawSprite(END_SPRITE, t, size, size, color[1], color[2], color[3], 0.125, true, true, true)
 end
 
 function E_SLAM:Tripwire()
@@ -52,6 +63,7 @@ function E_SLAM:Tripwire()
     QueryRejectBody(self.body)
     QueryInclude("player")
     local _, pDist = QueryRaycast(raycastStartTrans.pos, direction, 48, 0.0, true)
+
     if not self.laserDist then self.laserDist = pDist end
 
     -- Check explode conditions
@@ -59,7 +71,7 @@ function E_SLAM:Tripwire()
     if IsBodyBroken(self.body) or not IsHandleValid(self.body) then self:Explode() return end
 
     if client then
-        local laserStartTrans = TransformToParentTransform(self.bodyTransform, Transform(Vec(-0.14, 0.2, -0.18), self.bodyTransform.rot))
+        local laserStartTrans = TransformToParentTransform(self.bodyTransform, Transform(Vec(-0.14, 0.2, -0.21), self.bodyTransform.rot))
         local laserStartVec = laserStartTrans.pos
 
         local endPos = VecAdd(laserStartVec, VecScale(direction, pDist))
@@ -70,9 +82,13 @@ function E_SLAM:Tripwire()
 
 		t.rot = QuatAlignXZ(xAxis, zAxis)
 
+        -- Draw the laser, mix in a DrawLine to make it contrast
 		DrawSprite(E_SLAM.laserSPR, t, pDist, 0.04, 1.0, 0.0, 0.0, 0.125, true, true)
         DrawLine(laserStartVec, endPos, 1.0, 0.0, 0.0, 0.1)
-		--endSpr(endPos, 1, Vec(1, 0, 0))
+
+        -- Draw flares at the beginning and end
+		endSpr(endPos, 0.4, Vec(1, 0, 0))
+        endSpr(laserStartVec, 0.4, Vec(1, 0, 0))
     end
 end
 
@@ -125,6 +141,7 @@ function E_SLAM.Throw(transform, velocity, owner)
     grenade:MDL_SET("MOD/models/xml/gren_satch.xml", 1)
 
     SetTag(grenade.body, "thrownSlam")
+
     SetBodyVelocity(grenade.body, velocity)
     SetBodyAngularVelocity(grenade.body, TransformToParentVec(GetPlayerEyeTransform(owner), Vec(0, 10.16, 0)))
 

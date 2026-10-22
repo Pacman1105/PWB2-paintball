@@ -85,6 +85,7 @@ function C_SLAM:PrimaryAttack(dt)
 			return
 		end
 
+		-- Swing weapon model
 		self.swingNumb = self.swingNumb - 1
 		if self.swingNumb == -4 then self.swingNumb = -1 end
 		client.PWB_ANIMATOR[self.owner].timeSinceFire = 0.0
@@ -122,6 +123,7 @@ function C_SLAM:PrimaryAttack(dt)
 
 		PlaySound(self.snds["throw"], self.muzzlePos, 0.7)
 	else
+		-- Server needs to increment this even if the entity is only on clients
 		CurEntSlot = CurEntSlot + 1
 	end
 
