@@ -22,8 +22,8 @@ C_AR.dmg_plyr		  = 0.34			   -- 0.0-1.0
 C_AR.flags = 0 -- Weapon flags
 C_AR.snds  = 0 -- Prechached SFX list, set on INIT
 
-local ACCURACY_SHOT_PENALTY_TIME	= 0.66	-- Applied amount of time each shot adds to the time we must recover from
-local ACCURACY_MAXIMUM_PENALTY_TIME	= 1.5	-- Maximum penalty to deal out
+local ACCURACY_SHOT_PENALTY_TIME	= 0.33	-- Applied amount of time each shot adds to the time we must recover from
+local ACCURACY_MAXIMUM_PENALTY_TIME	= 1.0	-- Maximum penalty to deal out
 
 -- override initVars to add new variables
 function C_AR:initVars(owner)
@@ -61,7 +61,7 @@ function C_AR:GetPlayerSpread()
 									1.0 )
 
 	-- We lerp from very accurate to inaccurate over time
-	return Lerp(0, GLOBAL_5DEGREES, ramp)
+	return Lerp(0, GLOBAL_4DEGREES, ramp)
 end
 
 function C_AR:PrimaryAttack(dt)
@@ -104,7 +104,7 @@ function C_AR:PrimaryAttack(dt)
 
 	self.accuracyPenalty = self.accuracyPenalty + ACCURACY_SHOT_PENALTY_TIME
 
-	self.nextFire = self:GetNextAttackDelay(0.2)
+	self.nextFire = self:GetNextAttackDelay(0.175)
 end
 
 function C_AR:Reload()

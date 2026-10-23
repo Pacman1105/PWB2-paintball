@@ -79,7 +79,7 @@ function C_Doub:PrimaryAttack(dt)
 		PlayFireSound(self.snds["fire"], self.muzzlePos, 300)
 	end
 
-	self:FirePaintballsPlayer(4, self.eye.pos, GLOBAL_15DEGREES, 60, 100, 4)
+	self:FirePaintballsPlayer(4, self.eye.pos, GLOBAL_10DEGREES, 60, 150, 4)
 
 	baseWeap.DepleteAmmo(self, 1, 1)
 
@@ -119,7 +119,7 @@ function C_Doub:SecondaryAttack(dt)
 		PlayFireSound(self.snds["fireAlt"], self.muzzlePos, 300)
 	end
 
-	self:FirePaintballsPlayer(8, self.eye.pos, GLOBAL_20DEGREES, 60, 100, 4)
+	self:FirePaintballsPlayer(8, self.eye.pos, GLOBAL_15DEGREES, 60, 150, 4)
 
 	baseWeap.DepleteAmmo(self, 2, 2)
 

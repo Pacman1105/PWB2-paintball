@@ -22,8 +22,8 @@ C_SMG.dmg_plyr		   = 0.3				 -- 0.0-1.0
 C_SMG.flags = 0 -- Weapon flags
 C_SMG.snds  = 0 -- Prechached SFX list, set on INIT
 
-local ACCURACY_SHOT_PENALTY_TIME	= 0.1	-- Applied amount of time each shot adds to the time we must recover from
-local ACCURACY_MAXIMUM_PENALTY_TIME	= 1.0	-- Maximum penalty to deal out
+local ACCURACY_SHOT_PENALTY_TIME	= 0.2	-- Applied amount of time each shot adds to the time we must recover from
+local ACCURACY_MAXIMUM_PENALTY_TIME	= 2.0	-- Maximum penalty to deal out
 
 -- override initVars to add new variables
 function C_SMG:initVars(owner)
@@ -61,7 +61,7 @@ function C_SMG:GetPlayerSpread()
 									1.0 )
 
 	-- We lerp from very accurate to inaccurate over time
-	return Lerp(GLOBAL_2DEGREES, GLOBAL_7DEGREES, ramp)
+	return Lerp(GLOBAL_3DEGREES, GLOBAL_6DEGREES, ramp)
 end
 
 function C_SMG:PrimaryAttack(dt)

@@ -17,7 +17,7 @@ C_Spray.toolSlot = 6
 C_Spray.ammoLoadedMax    = WEAPON_NOCLIP		 -- Max clip 	 	-- -1 for no clip (pulls from reserve)
 C_Spray.ammoAltLoadedMax = WEAPON_NOALTAMMO	 	 -- Max alt clip 	-- -1 for no clip (pulls from reserve)
 C_Spray.ammoPickupSize   = 20 					 -- Defaults to full mag
-C_Spray.dmg_plyr		 = 0.08				 	 -- 0.0-1.0
+C_Spray.dmg_plyr		 = 0.09				 	 -- 0.0-1.0
 
 C_Spray.flags = 0 -- Weapon flags
 C_Spray.snds  = 0 -- Prechached SFX list, set on INIT

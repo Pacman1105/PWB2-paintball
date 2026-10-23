@@ -130,7 +130,7 @@ function C_Pistol:PrimaryAttack(dt)
 	local inAds = (server and self.ads) or (client and client.PWB_ANIMATOR[self.owner].forceSecondaryActionPose)
 	local spread = self:GetPlayerSpread() * (inAds and 0.25 or 1)
 
-	self:FirePaintballsPlayer(1, self.eye.pos, spread, 100, 150, 5)
+	self:FirePaintballsPlayer(1, self.eye.pos, spread, 100, 166, 5)
 
 	self.accuracyPenalty = self.accuracyPenalty + ACCURACY_SHOT_PENALTY_TIME
 

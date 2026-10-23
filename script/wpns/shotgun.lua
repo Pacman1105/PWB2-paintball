@@ -92,7 +92,7 @@ function C_Shtgn:PrimaryAttack(dt)
 		PlayFireSound(self.snds["fire"], self.muzzlePos, 300)
 	end
 
-	self:FirePaintballsPlayer(3, self.eye.pos, GLOBAL_5DEGREES, 60, 75, 4)
+	self:FirePaintballsPlayer(4, self.eye.pos, GLOBAL_5DEGREES, 60, 150, 4)
 
 	baseWeap.DepleteAmmo(self, 1, 1)
 
