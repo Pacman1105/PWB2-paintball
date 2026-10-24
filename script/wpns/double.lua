@@ -128,7 +128,7 @@ function C_Doub:SecondaryAttack(dt)
 end
 
 function C_Doub:Reload()
-	if self.ammoTotal <= 0 or self.ammoLoaded == self.ammoLoadedMax then
+	if self.ammoTotal <= 0 or self.ammoLoaded == self.ammoLoadedMax or self.ammoTotal == self.ammoLoaded then
 		return end
 
 	local curTime = GetTime()

@@ -100,8 +100,9 @@ function C_Shtgn:PrimaryAttack(dt)
 end
 
 function C_Shtgn:Reload()
-	if self.ammoTotal <= 0 or self.ammoLoaded == self.ammoLoadedMax then
+	if self.ammoTotal <= 0 or self.ammoLoaded == self.ammoLoadedMax or self.ammoTotal == self.ammoLoaded then
 		return end
+
 
 	local curTime = GetTime()
 
