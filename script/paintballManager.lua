@@ -88,7 +88,7 @@ function TickPB(
 				QueryInclude("player")
 				QueryInclude("animator") -- this causes LAG, as in LAG (as in LAG [as in LAG])
 				QueryRejectPlayer(pPB.entity.owner)
-				local hit, dist, traceNormal = QueryRaycast(pPB.entity.prevOrigin, betweenDir, betweenLen)
+				local hit, dist, traceNormal = QueryRaycast(pPB.entity.prevOrigin, betweenDir, betweenLen, 0.075)
 
 				if hit == true then
 					local proj, damp
@@ -118,7 +118,7 @@ function TickPB(
 						if hitDot < -0.0871 then  -- Impact
 							pPB.die = client_time
 
-							local didHit, impdist, shape, playerHit, _, traceNormal2 = QueryShot(pPB.entity.prevOrigin, betweenDir, betweenLen, 0, pPB.entity.owner)
+							local didHit, impdist, shape, playerHit, _, traceNormal2 = QueryShot(pPB.entity.prevOrigin, betweenDir, betweenLen, 0.075, pPB.entity.owner)
 							if didHit then
 								if server then
 									local body = GetShapeBody(shape)
