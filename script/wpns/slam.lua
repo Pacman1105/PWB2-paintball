@@ -78,38 +78,41 @@ function C_SLAM:Holster()
 	end
 end
 
-function C_SLAM:PrimaryAttack(dt)
-	if client then
-		if self.ammoTotal <= 0 then
-			self.nextFire = GetTime() + 0.15
-			return
-		end
+function C_SLAM:ServerSLAM(GrenTrans)
+	baseWeap.DepleteAmmo(self, 1)
 
-		-- Swing weapon model
-		self.swingNumb = self.swingNumb - 1
-		if self.swingNumb == -4 then self.swingNumb = -1 end
-		client.PWB_ANIMATOR[self.owner].timeSinceFire = 0.0
-
-		if self.isLocal then
-			self:ServerWpnCall("PrimaryAttack", dt)
-		end
+	if GrenTrans then
+		E_SLAM.Place(GrenTrans, self.owner)
+		PlaySound(self.snds["place"], GrenTrans.pos, 0.7)
+	else
+		-- Server needs to increment this even if the entity is only on clients
+		CurEntSlot = CurEntSlot + 1
 	end
+end
+
+function C_SLAM:PrimaryAttack(dt)
+	if self.ammoTotal <= 0 then
+		self.nextFire = GetTime() + 0.15
+		return
+	end
+
+	-- Swing weapon model
+	self.swingNumb = self.swingNumb - 1
+	if self.swingNumb == -4 then self.swingNumb = -1 end
+	client.PWB_ANIMATOR[self.owner].timeSinceFire = 0.0
 
 	local _,pos,_,angThrow = GetPlayerAimInfo(self.eye.pos, 3.0, self.owner)
 
 	local hit, dist, normal, shape = QueryRaycast(pos, TransformToParentVec(self.eye, Vec(0, 0, -1)), 3.0)
-
-	-- fix server raycast hitting thrown slam
-	-- TO-DO: would be best to just send the hit values to server instead of raycasting again
-	if HasTag(GetShapeBody(shape), "thrownSlam") then hit = false end
-
 	if hit then -- place tripmine
 		local GrenTrans = Transform(VecAdd(pos, VecScale(TransformToParentVec(self.eye, Vec(0, 0, -1)), dist + 0.1)), QuatLookAt(Vec(), normal))
 
-		PlaySound(self.snds["place"], GrenTrans.pos, 0.7)
-
 		E_SLAM.Place(GrenTrans, self.owner)
-	elseif client then -- throw as satchel
+
+		if self.isLocal then
+			self:ServerWpnCall("ServerSLAM", GrenTrans)
+		end
+	else -- throw as satchel
 		pos = VecAdd(pos, VecScale(angThrow, 0.25))
 
 		local velocity = VecAdd(GetPlayerVelocity(self.owner), VecScale(angThrow, 6.96))
@@ -122,12 +125,11 @@ function C_SLAM:PrimaryAttack(dt)
 		table.insert(C_SLAM.Satchels[self.owner], satchel)
 
 		PlaySound(self.snds["throw"], self.muzzlePos, 0.7)
-	else
-		-- Server needs to increment this even if the entity is only on clients
-		CurEntSlot = CurEntSlot + 1
-	end
 
-	baseWeap.DepleteAmmo(self, 1)
+		if self.isLocal then
+			self:ServerWpnCall("ServerSLAM")
+		end
+	end
 
 	self.nextFire = self:GetNextAttackDelay(1)
 end
